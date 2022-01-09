@@ -49,7 +49,12 @@ Dado que:
 3. `(xS, yS) = k*Qa` e `(xT, yT) = nA*R`;
 4. `Qa = nA*P` e `R = k*P`.
 
-**b)**
+**b) Implemente em Sage/Python, três métodos que para uma curva Eliptica**
+
+1. Produzam uma chave pública `Qa` e privada `nA`, com a assinatura `GenPubKey(A, B, p, xP, yP)`;
+2. Produzam um texto cifrado `(R, c1, c2)`, com a assinatura `Encript(A, B, p, xP, yP, Qa, m1, m2)`;
+3. Recuperam a mensagem original `(m1, m2)`, com a assinatura `Decript(A, B, p, xP, yP, R, c1, c2)`.
+
 
 ## Referências
 
