@@ -55,7 +55,70 @@ Dado que:
 2. Produzam um texto cifrado `(R, c1, c2)`, com a assinatura `Encript(A, B, p, xP, yP, Qa, m1, m2)`;
 3. Recuperam a mensagem original `(m1, m2)`, com a assinatura `Decript(A, B, p, xP, yP, R, c1, c2)`.
 
+Estes métodos são facilmente implementados, pois apenas é necessário traduzir as expressões da curva elíptica e da variante previamente analisados. Para a curva elíptica recorreu-se ao código disponibilizado, de forma a estabelecer a curva `P-384`.
 
-## Referências
+```
+p = 2**384 - 2**128 - 2**96 + 2**32 - 1
+Fp = FiniteField(p)
+A = -3
+B = 0xb3312fa7e23ee7e4988e056be3f82d19181d9c6efe8141120314088f5013875ac656398d8a2ed19d2a85c8edd3ec2aef
 
-Qualquer referência usada aqui
+Fp = FiniteField(p)
+E = EllipticCurve(Fp,[A,B])
+```
+
+Nos restantes métodos foi necessário traduzir as expressões e escolher pontos aleatórios dos campos finitos *Fp* e *Zp*, como demonstrado nos seguintes *code snippets*:
+
+```
+def GenPubKey(A, B, p, xP, yP):
+    Fp = FiniteField(p)
+    E = EllipticCurve(Fp,[A,B])
+    
+    P = (xP, yP)
+    nA = ZZ(Fp.random_element())
+    
+    Qa = tuple([nA*x for x in P]) # nA * P
+    
+    return Qa, nA
+
+def Encript(A, B, p, xP, yP, Qa, m1, m2):
+    Fp = FiniteField(p)
+    E = EllipticCurve(Fp,[A,B])
+    
+    P = (xP, yP)
+    k = ZZ(Fp.random_element())
+    S =  tuple([k*x for x in Qa]) # k * Qa
+    xS = S[0]
+    yS = S[1]
+
+    R = tuple([k*x for x in P]) # k * P
+    c1 = (xS*m1) % p
+    c2 = (yS*m2) % p
+    
+    return R, c1, c2
+
+def Decript(A, B, p, xP, yP, R, c1, c2):
+    P = (xP, yP)
+    T = tuple([nA*x for x in R]) # nA * R
+    
+    xT = T[0]
+    yT = T[1]
+    
+    m1 = ((xT ^ -1) * c1) % p
+    m2 = ((yT ^ -1) * c2) % p
+    
+    return m1, m2
+```
+
+No método `Decript` optou-se por calcular *m'1* e *m'2*, dado que foi previamente provado que estes dois pontos são iguais a *m1* e *m2*. É também possível confirmar que a implementação dos métodos ao verificar que as o output do método `Decript` é igual a *m1* e *m2*.
+
+```
+xP, yP = 3, 4
+m1, m2 = 5, 6
+
+Qa, nA = GenPubKey(A, B, p, xP, yP)
+R, c1, c2 = Encript(A, B, p, xP, yP, Qa, m1, m2)
+rm1, rm2 = Decript(A, B, p, xP, yP, R, c1, c
+
+assert((m1, m2) == (rm1, rm2))
+```
