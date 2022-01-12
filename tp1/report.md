@@ -72,3 +72,6 @@ edurahadoismesesaomesmotempoemmoscovomilpessoasmanifestaramachuvaapoioasuacandid
 
 **2) Cifra de Vigenère**
 
+A segunda mensagem foi cifrada com a cifra de Vigenère. Esta cifra é mais complexa do que a Caesar, pois utiliza uma substituição polialfabética, ou seja, multiplos alfabetos. Para a utilizar, primeiro temos que construir uma matriz que contém os alfabetos repetidos *N* vezes, sendo N o número de letras do alfabeto. Depois, é produzido uma chave de tamanho menor ou igual ao tamanho da mensagem a cifrar, que irá servir de guia da cifracação. O alfabeto descrito horizontalmente na matriz (i.e., rows) representa o alfabeto original, sendo que o alfabeto descrito verticalmente representa o alfabeto da chave. Por final, para cada uma das letras do alfabeto e chave, é encontrado a letra na matriz que corresponde à letra da mensagem cifrada.
+
+Uma vez que não se conhece a chave usada na cifra, nem o seu tamanho, não é possível decifrar a mensagem ao "refazer" o algoritmo da cifra. Contudo é possível aplicar o teste de Friedman para calcular o tamanho da chave, pois este indica-nos com ????? RUI COMPLETA PFV. 
