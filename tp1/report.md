@@ -74,4 +74,22 @@ edurahadoismesesaomesmotempoemmoscovomilpessoasmanifestaramachuvaapoioasuacandid
 
 A segunda mensagem foi cifrada com a cifra de Vigenère. Esta cifra é mais complexa do que a Caesar, pois utiliza uma substituição polialfabética, ou seja, multiplos alfabetos. Para a utilizar, primeiro temos que construir uma matriz que contém os alfabetos repetidos *N* vezes, sendo N o número de letras do alfabeto. Depois, é produzido uma chave de tamanho menor ou igual ao tamanho da mensagem a cifrar, que irá servir de guia da cifracação. O alfabeto descrito horizontalmente na matriz (i.e., rows) representa o alfabeto original, sendo que o alfabeto descrito verticalmente representa o alfabeto da chave. Por final, para cada uma das letras do alfabeto e chave, é encontrado a letra na matriz que corresponde à letra da mensagem cifrada.
 
-Uma vez que não se conhece a chave usada na cifra, nem o seu tamanho, não é possível decifrar a mensagem ao "refazer" o algoritmo da cifra. Contudo é possível aplicar o teste de Friedman para calcular o tamanho da chave, pois este indica-nos com ????? RUI COMPLETA PFV. 
+Uma vez que não se conhece a chave usada na cifra, nem o seu tamanho, não é possível decifrar a mensagem ao "refazer" o algoritmo da cifra. Contudo é possível aplicar o teste de Friedman e determinar o período, ou seja, o tamanho da chave. Através de shifts sucessivos na mensagem original e representar os valores do teste Friedman num gráfico de barras, reparamos que a cada 5 shifts, o valor destaca-se dos restante. Com isto podemos afirmar que a chave tem um período/tamanho de 5 letras.
+
+Uma vez conhecido o período da chave, podemos dividir o texto em colunas do tamanho da mesma. Neste caso o texto dividiu-se em 5 colunas. Tendo as colunas, ao determinarmos a letra que com o maior número de ocorrências, podemos afirmar que essa letra faz parte da chave usada para cifrar a mensagem.
+
+A chave obtida através das colunas é `gqsfg`. Aplicando a mesma sobre uma função que decifra a cifra Vigenère, obtemos a seguinte mensagem decifrada:
+
+```
+OHOJEFOREMRECEBIDOSPELOPRIMEIROMINISTRODEMITTERRANDOSECOLOGISTASTENCIONAMACEITARASDESCULPASESAUDARASUAPROMESSADEAP
+OIOAUMARESERVAMUNDIALNAANTARTIDAMASQUENADAJUSTIFICAAINTENCAODECONTINUARCOMASEXPERIENCIASDEMATERIALATOMICOPELOFACTO
+DEGEORGEBUSHVOLTARAAPRESENTARSETRADICAONOPARTIDENTRECATOLICOSEPROTESTANTESNAIRLANDADONORTEASPALAVRASSUBSTITUEMHOJE
+ASBALASEOSDISPAROSDEMORTEIROOSINIMIGOSCENTENARIOSVAOCONVERSARSOBAMEDIACAODEPETERBROOKEOMINISTRODELONDRESTRANSFORMA
+DOEMHEROITEMDEZSEMANASPARAENCONTRARUMASOLUCAOQUEACABECOMUMAGUERRACIVILDEDECADASMINISTROBRITANICOPARAAIRLANDADONORT
+EDESDEVERCAIXABROOKEVAITENTARCOMQUATROPARTIDOSDAPROVINCIACHEGARAACORDOQUANTOAUMANOVAFORMADEADMINISTRACAODAIRLANDAD
+ONORTEQUEEXCLUAOGOVERNODELONDRESBORISIELTSINCANDIDATOAPRESIDENCIADAREPUBLICARUSSAEMELEICOESMARCADASPARADEJUNHOCHEG
+OUONTEMASIBERIAOCIDENTALPARATENTARCONVENCEROSMINEIROSDOKUZBASSASUSPENDEREMAGREVEQUEDURAHADOISMESESAOMESMOTEMPOEMMO
+SCOVOMILPESSOASMANIFESTARAMACHUVAAPOIOASUACANDIDATURAAPESARDASCRITICASDEALGUMASINTERVENC
+```
+
+O código desenvolvido para concluir a decifração encontra-se no caderno Jupyter `week1.ipynb`.
