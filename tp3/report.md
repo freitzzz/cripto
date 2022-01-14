@@ -57,3 +57,37 @@ Desde que o byte modificado não influencie o primeiro bloco, é possível recup
 
 **4) Repita o exercício anterior com o modo CTR. Quais são as diferenças?**
 
+Para auxiliar a cifração do ficheiro com o modo CTR, foi utilizado o seguinte código Python:
+
+```
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
+def encrypt_aes_ctr(input: bytes, key: bytes, nonce: bytes):
+    encryptor = Cipher(algorithms.AES(key), modes.CTR(nonce)).encryptor()
+    update = encryptor.update(input)
+    finish = encryptor.finalize()
+    return update + finish
+
+def pad(m):
+    return m+(chr(16-len(m) % 16)*(16-len(m) % 16)).encode()
+
+key = os.urandom(16)
+nonce = os.urandom(16)
+
+Path('input-key').write_bytes(hexlify(key))
+Path('input-nonce').write_bytes(hexlify(nonce))
+
+input = Path(sys.argv[1]).read_bytes()
+cipher_input = encrypt_aes_ctr(pad(input), key, nonce)
+output = Path(sys.argv[2]).write_bytes(cipher_input)
+```
+
+Também, o comando OpenSSL previamente usado foi atualizado para corresponder ao modo CTR:
+
+```
+openssl aes-128-ctr -d -in <cipher_input> -K <key_hex> -iv <nonce_hex>
+```
+
+Atualizando um byte e decifrando, é possível recuperar o ficheiro original. Isto deve-se ao facto que no modo de operação CTR, diferentes blocos podem ser atualizados e posteriorment recuperar a mensagem, desde que o valor do contador (nonce) não seja perdido/corrumpido. Desta forma, e em contraste com o CBC, é possível recuperar o ficheiro se primeiro bloco tiver sido corrumpido/perdido.
+
+Perdas de bits implicam que partes do ficheiro não sejam recuperadas. É também possível atualizar um byte aleatório no ficheiro, sem que este cifre de novo o conteúdo do ficheiro original.
