@@ -1,0 +1,261 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red251\green2\blue7;\red0\green0\blue0;\red251\green0\blue7;
+\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c100000\c14913\c0;\cssrgb\c0\c0\c0;\cssrgb\c100000\c12195\c0;
+\cssrgb\c0\c1\c1;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10400\viewh15000\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Hash Functions\
+\
+Te\'f3rica #5 de Criptografia Aplicada\
+\
+**O que \'e9 uma fun\'e7\'e3o hash?**\
+\
+Fun\'e7\'e3o que dado um input, retorna uma string codificada que n\'e3o pode ser revertida.\
+\
+Quais as suas aplica\'e7\'f5es?\
+\
+- Deriva\'e7\'e3o de chaves;\
+- Authentication digest;\
+- Extra\'e7\'e3o de aleatoriedade;\
+- Prote\'e7\'e3o de passwords;\
+- Provas de trabalho (proofs-of-work);\
+- Indexa\'e7\'e3o de ficheiros em controlos de vers\'f5es (e.g., Git);\
+- Verifica\'e7\'e3o de integridade dos ficheiros relativo a dete\'e7\'e3o de intrusos (e.g., HMAC).\
+\
+Tipicamente tem como tamanho de output 256 e 512 bits.\
+\
+Tamb\'e9m conhecido como **hash**, **fingerprint** e **digest**.\
+\
+Fun\'e7\'f5es de hash n\'e3o verificam a propriedade da injetividade porque como comprimem o valor do output num tamanho diferente, significa que pode haver **n** inputs que **geram o mesmo output**.\
+\
+**O que faz uma fun\'e7\'e3o hash segura?**\
+\
+A melhor fun\'e7\'e3o hash poss\'edvel satisfaz o modelo de ***Random Oracle***: dado um input, a fun\'e7\'e3o hash retorna a hash do input que \'e9 \'fanica no espa\'e7o das hashes, significado que n\'e3o existem inputs diferentes que level ao mesmo hash (propriedade da injetividade).\
+\
+Para tal, come\'e7a-esse com uma tabela vazia que vai armazenando os valores de input e seus outputs. Se um input ainda n\'e3o existir na tabela, calcula-se o hash e retorna-se o mesmo, caso contr\'e1rio retorna-se o hash existente.\
+\
+Random Oracle n\'e3o \'e9 possivel na pr\'e1tica porque para tal era necess\'e1rio armazenar uma quantidade enorme de registos.\
+\
+Na pr\'e1tica as melhores fun\'e7\'f5es de hash s\'e3o aquelas que respondem aos requisitos que definimos, segundo propriedades de seguran\'e7a interessantes:\
+\
+- Outputs que s\'e3o **imprevis\'edveis**;\
+- Dif\'edcil de encontrar pr\'e9-imagens (diferentes inputs = mesmo output);\
+- Dif\'edcil de encontrar colis\'f5es.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf2 QUAL A DIFEREN\'c7A ENTRE ENCONTRAR COLIS\'d5ES E ENCONTRAR PR\'c9-IMAGENS???\
+\
+\cf3 Para tal, fun\'e7\'f5es de hash s\'e3o descritas e validadas heuristicamente (similar aos testes do AES):\
+\
+- Competi\'e7\'f5es internacionais para selecionar as fun\'e7\'f5es com melhor design;\
+- Competidores (cryptanalysis) s\'e3o criticados e refutam as fun\'e7\'f5es dos outros, em termos de **seguran\'e7a** e **performance**;\
+- Iterativamente (atrav\'e9s de rondas), vai-se refinando e escolhendo a fun\'e7\'e3o de hash ideal perante a opini\'e3o da comunidade (cryptanalysts).\
+\
+Fun\'e7\'e3o de hash standard mais recente: **SHA-3**.\
+\
+**Propriedade: Resist\'eancia a pre-imagens (Dif\'edcil de Inverter)**\
+\
+Considera-se *S* o conjunto de pre-imagens (dom\'ednio) e *R* o conjunto das imagens (contradom\'ednio): Dado um valor *Y* (hash) que pertence a R, o atacante tenta adivinhar X que pertence a S, onde H(X) = Y.\
+\
+Quando o conjunto de pre-imagens S \'e9 pequeno, existe uma maior probabilidade de se encontrar uma pre-imagem X para o valor Y.\
+\
+Fun\'e7\'f5es hash candidatas a **One-Wayness** requerem que o conjunto S **largo**.\
+\
+One-Wayness prova que`P != NP`!\
+\
+**Propriedade: Resist\'eancia a colis\'f5es (Dificil de encontrar hashes iguais para inputs diferentes)**\
+\
+Deve ser dif\'edcil `X != X\'92 onde H(X\'92) = H(X)`\
+\
+Em teoria, a probabilidade de ser produzida uma hash sobre dois inputs diferentes, diante aleatoriedade uniforme \'e9 `1/2^n`, sendo *n* o tamanho do output (numero de bits).\
+\
+Garantidamente \'e9 encontrada uma colis\'e3o ap\'f3s se verificar cerca de `2^n` pares.\
+\
+Qualquer fun\'e7\'e3o resistente a ataques de colis\'f5es **\'e9 tamb\'e9m** resistente a ataques de segunda pre-imagem, e qualquer fun\'e7\'e3o que seja resistente a ataques de segunda pre-imagem \'e9 tamb\'e9m resistente a ataques de pre-imagem, e como tal s\'e3o fun\'e7\'f5es **One-Way**.\
+\
+`CR => 2-PR => PR => One Way`\
+\
+Se ningu\'e9m consegue provar que P != NP, ent\'e3o ningu\'e9m consegue provar que exista uma fun\'e7\'e3o One Way, que por sua vez \'e9 PR, 2-PR e Collision Resistant\'85\
+\
+**Como quebrar as fun\'e7\'f5es de hash?**\
+\
+\'93Gen\'e9ricamente\'94, atrav\'e9s de um ataque brute-force\'85 Percorrer os 2^n outputs => Encontra pre-imagem.\
+\
+**Ataque de Anivers\'e1rio (Birthday attack)**\
+\
+Para encontrar colis\'f5es na fun\'e7\'e3o, podemos recorrer ao Birthday attack. Este ataque consiste em calcular todos os valores como num ataque de brute-force, com a exce\'e7\'e3o que armazenamos como entradas de uma tabela a pre-imagem e imagem, e ap\'f3s calcularmos uma nova imagem, percorremos a tabela para ver se encontramos a colis\'e3o. Tem de nome birthday attack porque explora o *Birthday Paradox*.\
+\
+Complexidade de `2^n/2`!\
+\
+**Seguran\'e7a em rela\'e7\'e3o a ataques de colis\'f5es**\
+\
+Quando procuramos satisfazer a propriedade de resist\'eancia a colis\'f5es, definimos que os outputs devem ser igual a 2x os par\'e2metros de seguran\'e7a. Isto \'e9, para:\
+\
+128-bit security => Output 256-bit hash\
+256-bit security => Output 512-bit hash\
+\
+## Constru\'e7\'e3o de Fun\'e7\'f5es Hash\
+\
+Dois paradigmas que utilizam processos iterativos para construir fun\'e7\'f5es hash:\
+\
+- Constru\'e7\'f5es **Merkle-Damgard**: Usadas para construir o MD5, MD5, SHA-1, SHA-256 e SHA-512. Utilizam como fun\'e7\'e3o de hash uma fun\'e7\'e3o que comprime *kn-to-n* bits, send *n* o tamanho do output e para um valor arbitr\'e1rio de tamanho de input;\
+- Construi\'e7\'f5es **Sponge**: Usadas para construir o SHA-3. Utilizam como fun\'e7\'e3o de hash um fun\'e7\'e3o que utiliza l-bit permutations, para qualquer tamanho de input e output.\
+\
+**Como \'e9 feita a constru\'e7\'e3o de Merkle-Damgard?**\
+\
+Existe um valor inicial ou IV, *H0*, uma mensagem *M* que \'e9 partida em blocos de tamanho *kn* (M1, M2, \'85 Mn). Este valor inicial serve como input para a fun\'e7\'e3o de compress\'e3o, incluindo o M1. Depois, o output da compress\'e3o \'e9 o **H1**. Este valor H1 vai servir como input da fun\'e7\'e3o de compress\'e3o da mensagem M2, e assim sucessivamente.\
+\
+<center>![merkle_damgard_construction_flow](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/hash-functions/merkle_damgard_construction_flow.png)</center>\
+\
+O tamanho dos blocos depende do tamanho do output, sendo o dobro do mesmo, ou seja:\
+\
+- SHA-256 tem como tamanho de bloco 512 bits e output 256;\
+- SHA-512 tem como tamanho de bloco 1024 bits e output 512.\
+\
+O **padding** dos blocos \'e9 ***crucial***, sendo necess\'e1rio incluir um bit com valor **1** \'e0 frente da mensagem e preencher com zeros at\'e9 64/128 bits (SHA-256/512) do fim do pr\'f3ximo bloco. Os \'faltimos 64/128 bits codificam o tamanho da mensagem em bits.\
+\
+**Seguran\'e7a da constru\'e7\'e3o Merkle-Damgard**:\
+\
+A fun\'e7\'e3o de compress\'e3o \'e9 resistente a colis\'f5es para **inputs pequenos** e implica que toda a constru\'e7\'e3o \'e9 resistente a colis\'f5es para qualquer que seja o input.\
+\
+Existe um problema nas constru\'e7\'f5es de Merkle-Damgard, que incidem no uso do padding indevido. Dado uma mensagem *M*, seu hash *h* e chave *K*, \'e9 poss\'edvel calcular  \
+\cf4 ????\
+\
+\cf5 **Como funcionam as fun\'e7\'f5es de compress\'e3o usada no Merkle-Damgard?**\
+\
+As fun\'e7\'f5es mais usadas em Merkle-Damgard utilizam a constru\'e7\'e3o de *Davis-Meyer*:\
+\
+Dado o hash i-1 e mensagem i, \'e9 aplicado uma fun\'e7\'e3o de encripta\'e7\'e3o \'e0 mensagem e no final aplicado uma opera\'e7\'e3o XOR com o hash.\
+\
+<center>![davis_meyer_construction_flow](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/hash-functions/davis_meyer_construction_flow.png)</center>\
+\
+**Como \'e9 feita a constru\'e7\'e3o Sponge ?**\
+\
+Paradigma recente e alternativo ao Merkle-Damgard. Recorre a uma permuta\'e7\'e3o de tamanho fixo e que n\'e3o usava chaves. \'c9 vers\'e1til no sentido em que o tamanho do input e output \'e9 arbitr\'e1rio, utiliza PRGs, PRFs , stream ciphers e keyed hashes.\
+\
+<center>![sponge_construction_flow](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/hash-functions/sponge_construction_flow.png)</center>\
+\
+Na constru\'e7\'e3o Sponge, existem duas fases: **absorb**  e **squeeze**.\
+\
+A fase absorb \'e9 semelhante ao Merkle-Damgard, onde a partir de uma hash inicial e mensagem M \'e9 realizado um XOR na mesma (H XOR M) e depois passa-se o output + o hash inicial para a fun\'e7\'e3o de permuta\'e7\'e3o. O output da fun\'e7\'e3o de permuta\'e7\'e3o \'e9 usado como hash na fase seguinte (mensagem e fun\'e7\'e3o).\
+\
+A fase squeeze pega em todas as permuta\'e7\'f5es criadas e a transforma-as num hash final.\
+\
+O tamanho dos estados \'e9 do mesmo tamanho do input da permuta\'e7\'e3o.\
+\
+## Fun\'e7\'f5es de Hash Concretas\
+\
+**MD5**\
+\
+Quebrado (2005), tinha como output apenas **128-bits**. A fun\'e7\'e3o de hash mais popular at\'e9 ser quebrada. Hoje em dia em poucos segundos encontra-se colis\'f5es. A fam\'edlia SHA utilizam um design muito parecido.\
+\
+**Secure Hash Algorithm (SHA) Family**\
+\
+Estandardizada pela NIST nos USA, mas vista como um de-facto standard no resto do mundo.\
+\
+Inicialmente foi publicado o **SHA-0**, em 1993. Mais tarde, foi substitu\'eddo pelo **SHA-1** em 1995. Ambos partilham propriedades similares:\
+\
+- Outputs de **160-bits**;\
+- Ataque de Colis\'e3o na ordem das **2^60** - **2^80** opera\'e7\'f5es;\
+- Mais tarde ataques de colis\'e3o na ordem das **2^33** opera\'e7\'f5es.\
+\
+Mais tarde introduzido o SHA-2, com outputs de 256 e 512 bits. Utiliza os mesmos princ\'edpios de design, mudando apenas o tamanho dos par\'e2metros que utiliza.\
+\
+No futuro, utilizar-se-\'e1 o SHA-3, que utiliza como paradigma a constru\'e7\'e3o Sponge e n\'e3o Merkle-Damgard.\
+\
+\
+**Como est\'e1 constru\'eddo o SHA-1?**\
+\
+Utiliza a constru\'e7\'e3o Merkle-Damgard com a fun\'e7\'e3o de compress\'e3o Davis-Mayer. A cifra de bloco usada na fun\'e7\'e3o de compress\'e3o tem de nome **SHACAL**.\
+\
+Blocos de mensagens com **512-bits**, outputs de hashes com **160-bits**.\
+\
+**Como est\'e1 construido o SHA-2?**\
+\
+Familia de 4 fun\'e7\'f5es hash: **SHA-224**, **SHA-256**, **SHA-384** e **SHA-512**, sendo que os d\'edgitos identificam o tamanho do output.\
+\
+Do SHA-1 melhorou-se as cifras de bloco utilizadas e o tamanho dos par\'e2metros.\
+\
+SHA-224 e SHA-256 utilizam blocos de tamanho **512-bits**, sobre **64** rondas. Estes diferem no IV utilizado e o output truncado.\
+\
+SHA-384 e SHA-512 relacionam-se na sua constru\'e7\'e3o, sendo que a fun\'e7\'e3o de compress\'e3o do SHA-512 opera sobre **80** rondas.\
+\
+**Como est\'e1 construido o SHA-3?**\
+\
+Ap\'f3s a fase de seguran\'e7a heur\'edstica, o design da equipa **Keccak** foi selecionado em 2009, ap\'f3s uma competi\'e7\'e3o de 3 anos. Esta competi\'e7\'e3o realizou-se para apurar novos designs no caso do SHA-2 ser quebrado.\
+\
+O Keccack \'e9 muito diferente do SHA-2 e tamb\'e9m muito flex\'edvel. Utiliza a constru\'e7\'e3o de esponja baseada em permuta\'e7\'f5es de **1600 bits**. Os blocos de entrada nas fun\'e7\'f5es de permuta\'e7\'e3o podem ter **1152**, **1088**, **832** e **76** bits, que correspondem a outputs de **224**, **256**, **384** e **512** bits.\
+\
+Keccak introduz as fun\'e7\'f5es SHAKE, de 128 e 256 bits, XOFs (eXtendable Output Functions), que permitem especificar o tamanho do output. \
+\
+## Keyed Hashing\
+\
+Keyed Hashing = Hashing utilizando chaves expl\'edcitas (que n\'e3o s\'e3o necess\'e1rias de especificar/introduzir)\
+\
+**O que s\'e3o MACs?**\
+\
+Message Authentication Codes (MACs) s\'e3o checksums constru\'eddos sobre uma sess\'e3o de comunica\'e7\'e3o, onde \'e9 aplicado  a chave da sess\'e3o sobre as mensagens da comunica\'e7\'e3o, para garantir a integridade e autentica\'e7\'e3o das mensagens transmitidas.\
+\
+Tipicamente s\'e3o usados para garantir a integridade e autentica\'e7\'e3o nos protocolos de comunica\'e7\'e3o SSH, IPSec e TLS.\
+\
+Flow MAC entre X e Y:\
+\
+- X e Y concordam no uso de uma chave K;\
+- X calcula T = MAC(M, K) e envia (M, T);\
+- Y recebe (M, T) e recalcula T\'92 = MAC(M, K)\
+- Y procede com a comunica\'e7\'e3o se T = T\'92.\
+\
+Nesta troca de informa\'e7\'e3o, as mensagens s\'e3o publicas pois o Mac n\'e3o garante a confid\'eancialidade. Para tal recorre-se a esquemas de encripta\'e7\'e3o.\
+\
+**Seguran\'e7a em MAC**\
+\
+Em MACs existe a no\'e7\'e3o de UF-CMA (Unforgeability - Chosen Message Attacks). A experiencia de seguran\'e7a decorre da seguinte forma:\
+\
+\cf4 N\'c3O PERCEBI UF-CMA\
+\
+\cf5 MAC por si n\'e3o protege compra ataques de replay, pois o atacante pode estar a escutar a rede e enviar (M, T) m\'faltiplas vezes, verificando-se sempre o MAC. Para tal \'e9 necess\'e1rio garantir que as mensagens nunca-se repetem na rede atrav\'e9s da adi\'e7\'e3o de nonces e timestamps.\
+\
+## Constru\'e7\'e3o de MACs\
+\
+MACs s\'e3o constru\'eddos atrav\'e9s de fun\'e7\'f5es hash e cifras de blocos. A constru\'e7\'e3o mais simples involve a utiliza\'e7\'e3o de uma **chave prefixo**.\
+\
+```\
+MAC(K, M) = H(K || M) ou PRF (K, M) = H(K || M)\
+```\
+\
+Por causa do *extension length attack*, o MAC e PRF baseados na constru\'e7\'e3o Merkle-Damgard s\'e3o inseguros.\
+\
+**O que \'e9 o HMAC e como est\'e1 construido?**\
+\
+HMAC (Keyed Hash Message Authentication Code) \'e9 uma constru\'e7\'e3o de MAC que utiliza **key hashing**. Possivel de ser conjugado com a constru\'e7\'e3o Merkle-Damgard, sendo que a fun\'e7\'e3o de compress\'e3o \'e9 um PRF, produzindo um MAC seguro.\
+\
+No fun\'e7\'e3o que utiliza valor inicial (H0) \'e9 conjugado a chave com o XOR de duas constantes: ipad e opad. Calculado o hash de estas duas constantes em conjunto com o valor inicial, conjuga-se por final as duas e recebe-se o hash HMAC (M, K).\
+\
+<center>![hmac_construction_flow](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/hash-functions/hmac_construction_flow.png)</center>\
+\
+Colis\'f5es podem ocorrem o que levam a MAC forgeries. Como a chave n\'e3o \'e9 conhecida no inicio, ataques de colis\'f5es s\'e3o mais dif\'edceis. Contudo, colis\'f5es acontecem com grande probabilidade a partir de **2^n/2** MACs calculados.\
+\
+**O que \'e9 o CMAC?**\
+\
+Cipher-based Message Authentication Code (CMAC) que opera de forma similar ao CBC, processando de forma sequencial e por blocos o valor do hash.\
+\
+**O que \'e9 o Poly1305?**\
+\
+Constru\'e7\'e3o de MAC eficiente based em fun\'e7\'f5es de hash **universais** e a constru\'e7\'e3o **Wegman-Carter**.\
+\
+Fun\'e7\'f5es de hash universais s\'e3o uma forma fraca de hashing, sendo que estas n\'e3o tem que ser resistentes a colis\'f5es. S\'e3o parametrizadas por uma chave *K* e garantem que para qualquer duas mensagens diferentes (M0 != M1)\
+\
+`Pr[UH(K, M0) = UH(K, M1)] <= e`\
+\
+Considerando que K \'e9 aleat\'f3rio e `e` bastante pequeno.\
+\
+Como n\'e3o existem requisitos de seguran\'e7a, a sua constru\'e7\'e3o \'e9 f\'e1cil de especificar. No entanto estas **apenas conseguem autenticar uma mensagem**. \cf4 (O QUE SIGNIFICA ISTO???)\
+\
+\cf5 **O que \'e9 a constru\'e7\'e3o Wegman-Carter?**\
+\
+A constru\'e7\'e3o Wegman-Carter converte uma fun\'e7\'e3o universal de hash em um MAC completamente seguro, atrav\'e9s de um PRF ou block cipher. Para tal \'e9 encriptado o output da fun\'e7\'e3o hash universal\
+\
+Exemplo: UH(K1, M1) XOR PRF (K2, N), sendo *N* um valor p\'fablico que nunca se deve repetir (contador ou gerado aleatoriamente). A chave completa do MAC \'e9 composta pelas duas chaves **K1** e **K2**.}

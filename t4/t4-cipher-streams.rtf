@@ -1,0 +1,178 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10640\viewh15000\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Stream Ciphers\
+\
+Te\'f3rica #4 de Criptografia Aplicada\
+\
+**Como funcionam Stream Ciphers?**\
+\
+Stream Ciphers usam **Geradores de Bits Aleat\'f3rios Determinist\'edcos (DRBG)** em vez de **Geradores de Pseudo Bits Aleat\'f3rios (PRBG)**, dado que \'e9 a propriedade **deterministica** do RBG (Random Bit Generator) que permite a correta decripta\'e7\'e3o dos dados. \
+\
+**PRBG** => Permite encriptar mas n\'e3o decriptar\
+\
+**DRBG** => Permite encriptar e decriptar\
+\
+<center>![stream_cipher_funcionamento](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/stream-ciphers/stream_cipher_flow.png)</center>\
+\
+A figura em cima representa o funcionamento geral de uma stream cipher. Tipicamente esta recebe uma chave (K) de **128** ou **256** bits e um nonce (N) tamb\'e9m com comprimento entre **64** e **128** bits. \
+\
+Ao contrario da chave, o nonce n\'e3o tem que ser secreto mas deve ser \'fanico para cada chave. Encriptando duas mensagens com a mesma chave e nonce gera problemas pois, mesmo as mensagens sendo diferentes, a keystream produzida \'e9 igual.\
+\
+```\
+KS1 = SC(K1, N1) (keystream)\
+C1 = KS1 XOR P1 (encriptar)\
+P1 = KS1 XOR P1 (decriptar)\
+```\
+\
+Se encriptarmos duas mensagens com a mesma keystream (mesma chave com a mesmo nonce), o seguinte acontece:\
+\
+```\
+C1 = KS XOR P1\
+C2 = KS XOR P2\
+\
+Obtendo o plain text P1, \'e9 possivel obter a keystream usada\
+\
+KS = C1 XOR P1\
+\
+E tendo a keystream\'85\
+\
+C1 XOR C2 XOR P1 = KS XOR P1 XOR KS XOR C2 XOR P1\
+					      = (KS XOR KS) XOR (P1 XOR P1) XOR P2\
+					      = P2\
+```\
+\
+**Stream Ciphers Stateful e Counter-Based**\
+\
+Numa perspetiva ampla, podemos categorizar as stream ciphers em dois modos: stateful e counter based:\
+\
+- Stateful stream ciphers partilham um estado interno que vai sendo atualizado ao longo da gera\'e7\'e3o da keystream (existe apenas uma stream cipher para todo o processo de cifragem, podendo-se se assemelhar o estado a uma keystream) (figura 2);\
+- Counter-Based stream ciphers produzem *chunks* da keystream a partir de uma chave, nonce e valor de contador, n\'e3o partilhando nenhum estado durante a gera\'e7\'e3o da keystream (figura 3).\
+\
+<center>![stateful_stream_cipher_funcionamento](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/stream-ciphers/stateful_stream_cipher_flow.png)</center>\
+\
+<center>![counter_based_stream_cipher_funcionamento](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/stream-ciphers/counter_based_stream_cipher_flow.png)</center>\
+\
+Dependendo da plataforma alvo onde a cifra se decorre, existem dois paradigmas de stream ciphers: **Hardware-Oriented** e **Software-Oriented**.\
+\
+**O que s\'e3o stream ciphers orientadas a hardware?**\
+\
+Implementa\'e7\'f5es orientadas a hardware s\'e3o representadas por circuitos eletr\'f3nicos que implementam o algoritmo da stream cipher ao bit level, n\'e3o sendo poss\'edvel usar o mesmo circuito para mais nada (dedicated hardware).\
+\
+**O que s\'e3o Feedback Shift Registers (FSR)?**\
+\
+FSR \'e9 um array de bits que tem associado uma fun\'e7\'e3o de *update feedback*. O estado do FSR \'e9 armazenado no array ou num registo e \'e9 atualizado com base na fun\'e7\'e3o de feedback, produzindo um bit. O calculo do estado funciona com shifts \'e0 esquerda e OR l\'f3gicos:\
+\
+```\
+Sendo Rt o estado do FSR a um determinado tempo *t* e f(Rt) a fun\'e7\'e3o de feedback:\
+\
+Rt + 1 = (Rt << 1) | f(Rt)\
+```\
+\
+O **periodo** do FSR \'e9 dado pelo numero de valores \'fanicos capazes de serem gerados at\'e9 que o valor do estado seja igual ao estado inicial. Quanto **maior** o per\'edodo, mais seguro \'e9 o FSR.\
+\
+**O que s\'e3o Linear Feedback Shift Registers (LFSRs)?**\
+\
+LFSRs s\'e3o FSRs que utilizam um fun\'e7\'e3o de feeback linear. A escolha dos bits para o LFSR \'e9 crucial para o seu periodo e por consequ\'eancia a sua seguran\'e7a.\
+\
+Considerando *n* o n\'famero de bits e o polin\'f3mio\
+\
+`1 + x + x^2 + \'85 + x^n`\
+\
+ent\'e3o, o periodo \'e9 m\'e1ximo se o polin\'f3mio for primitivo.\
+\
+LFSRs s\'e3o inseguros porque estes s\'e3o lineares. Se o atacante conhece o tamanho *n* de bits, ent\'e3o consegue recuperar o estado inicial.\
+\
+**O que s\'e3o filtered LFSRs**\
+\
+LFSRs, s\'f3 que antes de produzir os bits de output, aplica-se uma fun\'e7\'e3o n\'e3o linear `g`.\
+\
+**O que s\'e3o Nonlinear FSRs?**\
+\
+LFSRs n\'e3o lineares, isto \'e9, tem como fun\'e7\'e3o e feedback uma fun\'e7\'e3o n\'e3o linear.\
+\
+NAO ENTENDI O QUE \'c9 O GRAIN-128\
+\
+NAO ENTENDI O QUE \'c9 O A5/1\
+\
+**O que s\'e3o stream ciphers orientadas ao Software?**\
+\
+Stream ciphers orientadas ao Software tiram proveito da capacidade do hardware embebido e da abstra\'e7\'e3o entre as camadas software-hardware. N\'e3o est\'e3o restritos ao bit level, podendo especificar chaves e nonces em bytes.\
+\
+**RC4**\
+\
+RC4 \'e9 a stream cipher com mais anos de uso ao n\'edvel do software, sendo usado no WEP (Wireless Equivalent Privacy) e no protocolo TLS para estabelecer conex\'f5es HTTPS.\
+\
+**Como funciona o RC4?**\
+\
+(0). O estado interno do RC4 \'e9 representado por um array de 256 posi\'e7\'f5es, contendo um byte incrementado de 0 a 255. ([0] = 0, [1] = 1, \'85 [255] = 255).\
+\
+(1). Uma vez estabelecido o array, este \'e9 inicializado atrav\'e9s de um *KSA* (Key Scheduling Algorithm), que altera a posi\'e7\'e3o de cada um dos elementos:\
+\
+```\
+j=0\
+S = range(256) \
+for i in range(256): \
+	j = (j + S[i] + K[i % n]) % 256 \
+	S[i], S[j] = S[j], S[i]\
+```\
+\
+(2). De seguida, usando o estado inicial `S` previamente inicializado, \'e9 gerado uma keystream KS, **com o mesmo tamanho do plaintext** P, e calcula a cipher text C atrav\'e9s de uma opera\'e7\'e3o XOR.\
+\
+```\
+i=0\
+j=0 \
+for b in range(m): \
+	i = (i + 1) % 256 \
+	j = (j + S[i]) % 256 \
+	S[i], S[j] = S[j], S[i] \
+	KS[b] = S[(S[i] + S[j]) % 256]\
+\
+C = P XOR KS\
+```\
+\
+**O que \'e9 o Salsa20?**\
+\
+Stream cipher orientada a software, otimizada para CPUs modernos. Esta est\'e1 implementada em diversos protocolos e bibliotecas.\
+\
+\'c9 uma counter-based stream cipher que gera a sua keystream ao processar repetidamente um contador, que \'e9 incrementado para cada bloco a ser cifrado.\
+\
+<center>![salsa_20_funcionamento](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/stream-ciphers/salsa_20_flow.png)</center>\
+\
+(1). Dado uma chave (K) (256-bits), nonce (N) e o valor do contador (Ctr), \'e9 criado um bloco de 512-bits. A fun\'e7\'e3o Salsa20 core transforma esse bloco em um bloco aleat\'f3rio.\
+\
+(2). De seguida, mistura-se o valor original do bloco ao bloco transformado para se obter a keystream do bloco.\
+\
+(3). Por final, aplica-se a keystream na opera\'e7\'e3o XOR com o plain text e obt\'e9m-se o text encriptado.\
+\
+C = P XOR KS \
+\
+A fun\'e7\'e3o/algoritmo Salsa20 core utiliza uma fun\'e7\'e3o chamada **Quarter-Round (QR)*+ para transformar quatro 32-bit words (4 bytes), a, b, c e d.\
+\
+```\
+b = b XOR ((a + d) <<< 7)\
+c = c XOR ((b + a) <<< 9)\
+d = d XOR ((c + b) <<< 13)\
+a = a XOR ((d + c) <<< 18)\
+```\
+\
+O estado inicial \'e9 representado ent\'e3o pelo bloco de 512-bits, dividido por 16 parcelas de 32 bits cada.\
+\
+<center>![salsa_20_initial_state](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/stream-ciphers/salsa_20_initial_state.png)</center>\
+\
+Usando a fun\'e7\'e3o QR, o Salsa20 core aplica a mesma primeiramente nas quatro colunas do estado e de seguida nas quatro linhas do estado, criando o processo de nome ***double-round***.\
+\
+O Salsa20 aplica ent\'e3o o double-round 10 vezes, ao longo de 20 rondas (200 double-ronda) (da\'ed o 20 em Salsa20).\
+\
+Apenas ap\'f3s 4 rondas, uma altera\'e7\'e3o \'fanica propaga altera\'e7\'e3o em todos os 512 bits, dando-nos a propriedade criptogr\'e1fica de *full difusion*.\
+\
+**O que pode correr mal em stream ciphers?**\
+\
+- Fragilidade dos algoritmos;\
+- Designs inseguros;\
+- Implementa\'e7\'e3o incorretas;\
+- Reutiliza\'e7\'e3o do nonce (erro mais comum!).}

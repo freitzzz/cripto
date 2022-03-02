@@ -1,0 +1,199 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red164\green8\blue3;\red0\green0\blue0;\red251\green2\blue7;
+}
+{\*\expandedcolortbl;;\cssrgb\c71055\c10387\c0;\cssrgb\c0\c0\c0;\cssrgb\c100000\c14913\c0;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh15060\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 # Block Ciphers\
+\
+Te\'f3rica #3 de Criptografia Aplicada\
+\
+## Block Ciphers (Cifras de bloco)\
+\
+**O que s\'e3o cifras de bloco?**\
+\
+Uma cifra de bloco \'e9 definida por dois algoritmos deterministicos, que tem uma funcionalidade extremamente **limitada** (s\'f3 funcionam para blocos de tamanho B, ou seja dado um input com tamanho B o bloco ter\'e1 o tamanho B).\
+\
+Cifras de bloco s\'e3o inverteis e por sua vez injetivas, e como tem o mesmo tamanho no input e output s\'e3o permuta\'e7\'f5es (invertivel = que se pode reverter = decriptar).\
+\
+Chave define uma permuta\'e7\'e3o, e dado o seu tamanho lambda, no m\'e1ximo temos 2^lambda permuta\'e7\'f5es.\
+\
+**Seguran\'e7a em Cifras de Bloco**\
+\
+Cada cifra de bloco deve ser uma permuta\'e7\'e3o **pseudorandom** (PRP). \
+\
+Um atacante tenta descobrir o texto original e ent\'e3o faz uma vasta procura das encripta\'e7\'f5es:\
+\
+\cf2 NAO PERCEBI MUITO BEM O QUE \'c9 UMA PERMUTA\'c7\'c3O PSEUDOALEATORIA\
+\
+\cf3 Diferen\'e7as entre permuta\'e7\'f5es pseudoaleat\'f3rias e permuta\'e7\'f5es aleat\'f3rias:\
+\
+- N\'e3o existem repeti\'e7\'f5es de permuta\'e7\'f5es;\
+- Blocos de cifra parecem totalmente aleat\'f3rios;\
+- Inputs diferentes levam a outputs independentes;\
+- Deve ser imposs\'edvel recuperar a chave, caso contrario \'e9 poss\'edvel descobrir o texto a ser cifrado que leva \'e0 permuta\'e7\'e3o.\
+\
+**Tweakable Block Ciphers**\
+\
+Variante das cifras de bloco onde \'e9 acrescentada mais uma \'93camada\'94 de seguran\'e7a, ao acrescentar um valor de ajuste (tweak) no input da encripta\'e7\'e3o e decripta\'e7\'e3o.\
+\
+**Block Size**\
+\
+Antigamente: tamanhos de bloco de 64 bits (DES - Data Encryption Standard)\
+\
+Mais recentemente: tamanhos de bloco de 128 bits (AES - Advanced Encryption Standard)\
+\
+O tamanho dos blocos deve ser moderado: n\'e3o pode ser muito pequeno porque o tamanho dos blocos tamb\'e9m serve como par\'e2metro de seguran\'e7a da cifra, mas tamb\'e9m n\'e3o podem ser muito grandes se n\'e3o as implementa\'e7\'f5es em Hardware/Software tornam-se ineficientes.\
+\
+## Como s\'e3o as cifras de bloco constru\'eddas?\
+\
+**Cifras iterativas: rondas**\
+\
+Cifra de bloco itera um algoritmo de ronda *n* vezes, sendo que cada ronda toma uma chave diferente:\
+\
+- **Chave de ronda** derivada de uma chave da cifra de bloco;\
+- Sequencia de **chaves de ronda** de nome *key schedule*.\
+\
+Exemplo de encripta\'e7\'e3o: **E**(*K*, *P*) := R(\'85R(R(P, K1), K2,)\'85Kn)\
+\
+Existem **dois** padr\'f5es para constru\'e7\'e3o de cifras de bloco:\
+\
+- Substitution-Permutation Network (SPN);\
+- \'85\
+\
+**Substitution-Permutation Network**\
+\
+Nestas redes, a fun\'e7\'e3o de ronda \'e9 uma camada de Substitution-Permutation:\
+\
+- **Substitution** \'e9 representada por *S-boxes*, tabelas de consulta pequenas (4-8 bits), desenhadas para introduzir (n\'e3o linearidade) na fun\'e7\'e3o de ronda. Estas por si criam a propriedade de *confus\'e3o* no bloco;\
+- **Permutation** \'e9 representado por transforma\'e7\'f5es bit-level (e.g., switches) ou por fun\'e7\'f5es alg\'e9bricas que introduzem depend\'eancias ao longo de todo o bloco (propriedade de *difus\'e3o*). \
+\
+Exemplo de uma cifra de bloco que \'e9 constru\'edda sobre este padr\'e3o: **AES**.\
+\
+<center>![exemplo_spn](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/cipher-blocks/substitution-permutation-network.png)</center>\
+\
+**Feistel Network**\
+\
+Teve bastante import\'e2ncia no n\'edvel do hardware, pois tem como objetivo garantir que o circuito de hardware utilizador para fazer a cifra \'e9 o mesmo para a decifrar, mudando apenas os inputs (plain text - encriptar e texto encriptado - decriptar).\
+\
+Funciona da seguinte maneira: dado um block de input, \'e9 divido a meio de forma a gerar o par (L, R). Ao R, \'e9 aplicado a fun\'e7\'e3o de ronda e utiliza-se o L para mascar o mesmo. Na itera\'e7\'e3o seguinte, utiliza-se o output da mascara como R, ou seja utiliza-se a fun\'e7\'e3o de ronda no output da mascara e o R original como input para a mascara.\
+\
+```\
+Bloco a encriptar -> (L, R)\
+R\'92 = Fronda (R)\
+M = L XOR R\'92\
+M\'92 = Fronda (M)\
+M\'92\'92 = R XOR M\'92\
+\'85.\
+```\
+\
+Para decriptar, inverte-se a ordem das chaves.\
+\
+Exemplo de uma cifra de bloco que \'e9 constru\'edda sobre este padr\'e3o: **DES** e **GOST**.\
+\
+<center>![exemplo_feistel_network](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/cipher-blocks/feistel_network.png)</center>\
+\
+A fun\'e7\'e3o de ronda pode ser uma PRP ou PRF e o tamanho do input pode ser diferente do output.\
+\
+**3DES**\
+\
+3DES =  Aplica\'e7\'e3o do DES tr\'eas vezes com chaves independentes (diferentes).\
+\
+**AES**\
+\
+Criado por motiva\'e7\'e3o ao provar-se que DES n\'e3o era seguro. Foi criado atrav\'e9s de um concurso de criptografia que demorou 3 anos, lan\'e7ado pela NIST. Foi utilizado como modo defesa a heur\'edstica, sendo este aberto a propostas e atacado pelo resto da comunidade (participantes). Foi criado com o objetivo de ser eficiente (performance) e resistente a cryptanalysis.\
+\
+Tamanho do bloco: 128-bit\
+\
+Chaves de 128, 192 e 256 bits.\
+\
+Mant\'e9m um estado interno de 128-bits, sendo os estados pertencentes a uma matriz de 4x4 (16 estados).\
+\
+\'c9 implementado segundo o padr\'e3o SPN.\
+\
+N\'e3o existe prova matem\'e1tica que o AES \'e9 uma PRP.\
+\
+## Symmetric Encryption with Block Ciphers\
+\
+**Modos de Opera\'e7\'e3o**\
+\
+Historicamente, cifras de bloco eram usadas em diferentes modos de opera\'e7\'e3o para encriptar informa\'e7\'e3o.\
+\
+Nos dias de hoje, a criptografia tenta esclarecer v\'e1rias coisas:\
+\
+- Cifras de bloco s\'e3o primitivas (algo at\'f3mico que nos permite construir outras coisas - building block);\
+- Por si, cifras de bloco por si s\'e3o \'93useless\'94;\
+- Existem muitas maneiras de encriptar de forma insegura com uma cifra de bloco;\
+- O que se pretende \'e9 construir esquemas de encripta\'e7\'e3o atrav\'e9s de cifras de bloco, pois estes tem as suas pr\'f3prias defini\'e7\'f5es de seguran\'e7a.\
+\
+**Cifra Sim\'e9trica**\
+\
+Tipicamente encripta\'e7\'e3o \'e9 um algoritmo probabil\'edstico, enquanto que o de decripta\'e7\'e3o, determin\'edstico.\
+\
+A mensagem a encriptar pode ter **qualquer tamanho* (nao tem que satisfazer as condi\'e7\'f5es do tamanho do bloco)*.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf4 NAO PERCEBI MUITO BEM O IND-CPA\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf3 **ECB - Electronic-Code-Book Operation Mode**\
+\
+Modo mais simples de cifra sim\'e9trica e por sua vez o mais inseguro de todos.\
+\
+A mensagem \'e9 dividida em m\'faltiplos blocos, sendo que o ultimo bloco pode precisar de padding, de forma a que o tamanho do bloco da cifra se mantenha. Inseguro no sentido que para blocos de cifra iguais, o output \'e9 o mesmo.\
+\
+<center>![exemplo_inseguranca_ecb](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/cipher-blocks/ecb_tux.png)</center>\
+\
+<center>![ecb_modo_operacao](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/cipher-blocks/ecb_operation_mode.png)</center>\
+\
+Problema ECB => Inputs Iguais = Outputs iguais => Falta de difus\'e3o\
+\
+**CBC - Cipher Block Chaining Operation Mode**\
+\
+Requer um IV - Initialization Vector (estilo de uma chave pseudoaleat\'f3ria ou \'fanica), que \'e9 aplicado no XOR da primeira mascara do primeiro bloco a cifrar. Nos seguintes blocos, \'e9 utilizado o output do bloco cifrado como IV da mascara.\
+\
+```\
+Plain text -> B\{B1, B2, B3, \'85, Bn\}\
+M1 = B1 XOR IV\
+C1 = E(M1, K)\
+M2 = B2 XOR C1\
+C2 = E(M2, K)\
+\'85.\
+```\
+\
+<center>![cbc_modo_operacao](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/cipher-blocks/cbc_operation_mode.png)</center>\
+\
+Existe muito menos probabilidade do output ser igual ao input. Encripta\'e7\'e3o do mesmo plain text com IVs diferentes s\'e3o sempre independentes (isto significa que CBC satisfaz IND-CPA, porque \'e9 um PRP.\
+\
+Na fase de decifra\'e7\'e3o, \'e9 revertido o processo ao aplicar o bloco de cifra na fun\'e7\'e3o de encripta\'e7\'e3o e de seguida utilizar a cifra de bloco anterior na fun\'e7\'e3o XOR, para obter a mensagem que foi cifrada, ou seja:\
+\
+`Pn = E(Cn, K) XOR Cn-1`\
+\
+Isto permite-nos concluir que \'e9 poss\'edvel decriptar uma mensagem previamente encriptara em CBC n\'e3o conhecendo o IV, pois apenas \'e9 preciso jogar com os blocos e reverter o processo (mas a chave \'e9 sempre necess\'e1ria). Se mudarmos um bloco de cifra, todos os seguintes s\'e3o corrompidos no sentido em que n\'e3o podem ser decriptados, mas os anteriores sim.\
+\
+Cifragem \'e9 **sequencial** mas a decifragem pode ser feita em **paralelo**.\
+\
+**Esquemas de Padding**\
+\
+Como cifras de bloco requerem que todos os blocos sejas de tamanho igual ou m\'faltiplo do estabelecido, \'e9 necess\'e1ria adicionar padding \'e0s mensagens a cifrar quando estas n\'e3o cumprem o tamanho do bloco. Padding significa \'93adicionar espa\'e7o\'94 a algo, neste caso acrescentar bytes para satisfazer os requisitos do tamanho do bloco.\
+\
+**CTR - Counter (Operation) Mode**\
+\
+Trabalha-se com o contadores (valor n\'famerico) como vetor de inicializa\'e7\'e3o.\
+\
+Opera de forma semelhante ao CBC, mas em vez do input da fun\'e7\'e3o criptogr\'e1fica ser a mensagem plain text, no CTR a mensagem \'e9 substitu\'edda por uma stream de contadores \{0, 1, 2, 3, \'85 N\}. Depois na fase da mascara, o XOR \'e9 aplicada ao bloco da mensagem plain text.\
+\
+Nonce CTR Mode aplica a no\'e7\'e3o de um nonce (number used only once) truncado ao valor do contador para cada bloco a cifrar.\
+\
+N\'e3o requer padding.\
+\
+O CTR \'e9 bastante eficiente pois:\
+\
+- permite a paraleliza\'e7\'e3o da encripta\'e7\'e3o e decripta\'e7\'e3o dos blocos;\
+- diferentes blocos podem ser atualizados, e consequentemente decriptados de novo, desde que n\'e3o se perca o contador.\
+\
+\
+<center>![ctr_modo_operacao](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/cipher-blocks/ctr_operation_mode.png)</center>}

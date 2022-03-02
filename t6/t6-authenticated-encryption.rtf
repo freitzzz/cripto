@@ -1,0 +1,97 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9800\viewh15020\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Authenticated Encryption\
+\
+Te\'f3rica #6 de Criptografia Aplicada\
+\
+**Porqu\'ea Authenticated Encryption?**\
+\
+Qualquer canal de comunico seguro requer o uso de authenticated encryption, pois as mensagens:\
+\
+- Devem ser confidenciais;\
+- Devem ser autenticas;\
+- N\'e3o podem ser repetidas, removidas ou omitidas.\
+\
+Encryption providencia **confidencialidade**.\
+\
+MACs providenciam **autenticidade**.\
+\
+**Meta-informa\'e7\'e3o** p\'fablica e autenticada \'e9 usada para resolver o problema da repeti\'e7\'e3o/remo\'e7\'e3o/omiss\'e3o das mensagens. O **Authenticated Encryption with Associated Data (AEAD)** garante as tr\'eas propriedades.\
+\
+**Formas de Authentication Encryption com MACs**\
+\
+Existem **tr\'eas** formas de Authentication encryption com MACs:\
+\
+- Encrypt-and-MAC: Processo paralelizado, onde se obt\'e9m o par (C, T) atrav\'e9s das fun\'e7\'f5es de encripta\'e7\'e3o e MAC, sendo *C* a cifra obtida e *T* a tag hash, atrav\'e9s do plain text *P*;\
+- MAC-then-Encrypt: Processo sequencial onde primeiro, dado o plaintext *P*, \'e9 obtido a tag atrav\'e9s da fun\'e7\'e3o MAC e depois associado na fun\'e7\'e3o de encripta\'e7\'e3o, devolvendo apenas o valor encriptado *C*;\
+- Encrypt-then-MAC: Processo sequencial onde primeiro, dado o plaintext *P*, \'e9 encriptado a mensagem e depois aplicado a fun\'e7\'e3o MAC, obtendo-se assim o par (C, T).\
+\
+\
+![authenticated_encryption_using_macs](authenticated_encryption_using_macs.png)\
+\
+**Encrypt-and-MAC**\
+\
+Apesar de permitir a encripta\'e7\'e3o autenticada em modo paralelo, o mesmo n\'e3o se pode realizar na decripta\'e7\'e3o autenticada, pois apenas se aceita a mensagem se o MAC do plaintext for verificado primeiro.\
+\
+Tem como problemas a decripta\'e7\'e3o de cifras desconhecidas e por si potencialmente maliciosas, antes de serem autenticadas.\
+\
+```\
+K = (K1, K2)\
+C = Enc(K1, M)\
+T = MAC(K2, M)\
+\
+Output = (C, T)\
+```\
+\
+Aplica\'e7\'f5es: **IPSec**\
+\
+**MAC-then-Encrypt**\
+\
+O mesmo problema que o Encrypt-and-MAC, no sentido em que para decripta-se primeiro antes de verificar a mensagem, o que leva a decripta\'e7\'e3o de cifras potencialmente maliciosas. \
+\
+```\
+K = (K1, K2)\
+T = MAC(K1, M)\
+C = Enc(K2, M || T)\
+\
+Output = C\
+```\
+\
+Aplica\'e7\'f5es: **SSH**\
+\
+**Encrypt-then-MAC**\
+\
+Forma utilizada nos dias de hoje, pois n\'e3o existe o problema de decriptar mensagens potencialmente maliciosas, dado que o hash \'e9 calculado sobre a cifra *C* e n\'e3o sobre o plaintext *P*.\
+\
+```\
+K = (K1, K2)\
+C = Enc(K1, M)\
+T = MAC(K1, C)\
+\
+Output = (C, T)\
+```\
+\
+Aplica\'e7\'f5es: **Prote\'e7\'e3o ataques DoS (MAC tipicamente \'e9 mais r\'e1pida do que decriptar)**\
+\
+**Authenticated Encryption and its Security**\
+\
+Authenticated encryption utiliza authenticated ciphers como suas constru\'e7\'f5es\
+\
+```\
+Authenticated Encryption: (C, T) = AEnc (K, M)\
+Authenticated Decryption: (C, T) = ADec(K, C, T)\
+```\
+\
+Estas cifras devem providencias garantias de seguran\'e7a em termos de encripta\'e7\'e3o e autentica\'e7\'e3o:\
+\
+- **IND-CPA** para garantir a confidencialidade dos esquemas de encripta\'e7\'e3o;\
+- **Ciphertext unforgeability** n\'e3o no sentido do UF-CMA ou seja para MACs, mas sim para prever a descoberta de cifras (C, T) que s\'e3o aceites pelo ADec, sem saber a chave *K*.\
+\
+**Authenticated Encryption with Associated Data**\
+\
+|| = concatenado}

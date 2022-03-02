@@ -1,0 +1,87 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c100000\c100000\c100000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9800\viewh14820\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # RSA\
+\
+Te\'f3rica #8 de Criptografia Aplicada\
+\
+**Modelo de Criptografia Chave P\'fablica (PKC)**\
+\
+Este modelo representa a cifra\'e7\'e3o das mensagens de um canal de comunica\'e7\'e3o recorrendo a chaves p\'fablicas, que ambas as partes conhecem, e chaves privadas, onde cada agente tem e conhece apenas a sua pr\'f3pria chave.\
+\
+**RSA**\
+\
+Imaginamos o cen\'e1rio em que duas entidades, Alice e Bob, desejam comunicar entre si. A Alice come\'e7a por gerar um par de chaves (1 p\'fablica e 1 privada), atrav\'e9s do seguinte procedimento:\
+\
+1. Produz dois \'93grandes\'94 primos, de peso similar: *p* e *q*;\
+2. Define `n=p*q`\
+3. Produz `e <  
+\f1\fs29\fsmilli14667 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u966 
+\f0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 (n) = (p - 1)(q - 1)`, onde `(e, 
+\f1\fs29\fsmilli14667 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u966 
+\f0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 (n)) = 1`\
+4. Calcula `d = e ^ -1 (mod 
+\f1\fs29\fsmilli14667 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u966 
+\f0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 (n))`\
+\
+Chave p\'fablica = (n, e)\
+Chave privada = (n, d)\
+\
+Se o Bob deseja enviar uma mensagem *m* \'e0 Alice, calcula a mensagem cifrada `c = m^e (mod(n))` e envia-lhe. A Alice decifra a mensagem cifrada atrav\'e9s de: `c^d  (mod(n)) = (m^e (mod(n)))^d (mod(n)) = m^e*d (mod(n)) = m^k
+\f1\fs29\fsmilli14667 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u966 
+\f0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 (n)+1 = m`\
+\
+O RSA e na generalidade todos os PKC Ciphers, s\'e3o f\'e1ceis de utilizar mas pouco eficientes, sendo cerca de 1000 mais lentos que cifras sim\'e9tricas. O facto que tamb\'e9m usa uma chave p\'fablica, que \'e9 *p\'fablica*, as cifras PKC s\'e3o vulner\'e1veis a ataques de dicion\'e1rio quando a mensagem original tem origem num campo de mensagens conhecidas ou de pequeno per\'edodo (tamanho).\
+\
+**Optional Asymmetric Encryption Padding (OAEP)**\
+\
+O OAEP \'e9 um t\'e9cnica usada para tornar a cifra\'e7\'e3o com RSA mais forte. Esta consiste na adi\'e7\'e3o de padding \'e0 mensagem original, de forma a que seja mais dif\'edcil adivinhar a mesma.\
+\
+![oaep_flow](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/rsa/oaep_flow.png)\
+\
+Esta t\'e9cnica utiliza um PRNG (Pseudorandom Number Generator), de forma a garantir as propriedades da indistinguibilidade e n\'e3o maleabilidade. O OAEP \'e9 seguro desde que a fun\'e7\'e3o RSA e PRNG sejam seguros e tamb\'e9m que as fun\'e7\'f5es hash n\'e3o sejam muito fracas.\
+\
+Para cifrar textos com RSA deve-se usar o OAEP.\
+\
+**Assinar com RSA**\
+\
+Para assinar com RSA, um apenas precisa de calcular `m^d (mod(n))`\
+\
+Sendo que a verifica\'e7\'e3o da assinar \'e9 a decifra\'e7\'e3o da mensagem com a chave p\'fablica.\
+\
+**Problema de Assinaturas Simples RSA**\
+\
+Um atacante pode falsificar assinaturas de 0, 1 e (n-1), pois:\
+\
+```\
+0^d (mod(n)) = 1^d (mod(n)) = 1\
+	= (n - 1)^d (mod(n)) = -1\
+```\
+\
+Um atacante pode tamb\'e9m realizar um *blinding attack*, dado que se um encontra um valor *r* dado que `r^e * m (mod(n))` \'e9 o valor da mensagem plaus\'edvel de ter sido assinada, ent\'e3o \'e9 f\'e1cil obter *m^d*, dado que:\
+\
+```\
+S = (r^e * m)^d = rm^d\
+```\
+\
+**PSS (Probabilistic Signature Scheme) Signature Standard**\
+\
+Esquema de assinaturas com RSA, provado como seguro, mas complexo, o que leva a erros desnecess\'e1rios de implementa\'e7\'e3o.\
+\
+![pss_rsa_flow](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/rsa/pss_rsa_flow.png)\
+\
+**Full Domain Hash Signatures (FDHS)**\
+\
+Implementa\'e7\'e3o mais simples que PSS, mas com menores provas de seguran\'e7a.\
+\
+![fdhs_rsa](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/rsa/fdhs_rsa_flow.png)\
+\
+Em termos de seguran\'e7a, PSS \'e9 prefer\'edvel ao FDHS, dado as suas provas de seguran\'e7a. Contudo, na maioria dos contextos, a aplica\'e7\'e3o de FDHS n\'e3o traz grandes perdas de seguran\'e7a em compara\'e7\'e3o com o PSS. Contudo, em alguns contextos, PSS \'e9 prefer\'edvel devido \'e0 aleatoriedade adicionada por estes, evitando problemas causadas na implementa\'e7\'e3o deste, como por exemplo fault attacks e side channel attacks.}

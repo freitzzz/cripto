@@ -1,0 +1,71 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9800\viewh14820\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Computational Complexity & Hard Problems\
+\
+Te\'f3rica #7 de Criptografia Aplicada\
+\
+**M\'e1quina de Turing**\
+\
+Uma m\'e1quina de Turing (TM) define uma \'93fita\'94 (tape) infinita composta por opera\'e7\'f5es read e write. As opera\'e7\'f5es tanto podem seguir da esquerda para a direita, como da direita para a esquerda.\
+\
+Uma linguagem *L* satisfaz a propriedade *Turing-Recognisable*, se uma TM reconhecer as palavras compostas pela linguagem, ou seja, a TM ir\'e1 dar sempre uma resposta positiva e parar se a palavra *w* pertencer a *L*.\
+\
+Uma linguagem *L* satisfaz a propriedade *Turing-Decidable*, se uma TM souber reconhecer palavras que perten\'e7am \'e0 linguagem e souber rejeitar aquelas que n\'e3o perten\'e7am.\
+\
+**Landau Notation (Big O)**\
+\
+A nota\'e7\'e3o Big O expressa que uma fun\'e7\'e3o:\
+\
+```\
+f(n) = O(g(n))\
+```\
+\
+Sendo que `g(n)` expressa o limite superior de `f(n)` (g(n) \'e9 um limite superior asint\'f3tico para f(n)), ignorando qualquer factor constante associado a `f(n)` (e.g., f(3n) = O(g(n)) da mesma forma que f(n) = O(g(n))).\
+\
+Existe tamb\'e9m a nota\'e7\'e3o \'93small o\'94, que expressa:\
+\
+```\
+f(n) = o(g(n))\
+```\
+\
+Sendo que `f(n)/g(n) = 0`, onde *n* tende o seu limite at\'e9 ao infinito positivo.\
+\
+**Classes Complexionais**\
+\
+A complexidade computacional pode ser dividida em duas categorias de classes: temporal (time) e espacial (space). Estas classificam a complexidade em torno do tempo e espa\'e7o usado na fita da TM, para executar a fun\'e7\'e3o.\
+\
+A classe complexional mais importante \'e9 *P*, que define a classe complexidade das fun\'e7\'f5es que podem ser decididas em tempo polinomial por uma TM.\
+\
+![PTIME_complexity](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/computational-complexity/ptime_complexity.png)\
+\
+![PSPACE_complexity](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/computational-complexity/pspace_complexity.png)\
+\
+A segunda classe complexional mais importante \'e9 *NP* (Nondeterministic Polynomial), que define que linguagens (problemas):\
+\
+- Que possam ser decididas em tempo polinomial por uma TM n\'e3o determin\'edstico;\
+- Que possam ser verificadas em tempo polinomial por uma TM determin\'edstico.\
+\
+S\'e3o n\'e3o polinomiais.\
+\
+![NPTIME_complexity](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/computational-complexity/nptime_complexity.png)\
+\
+**O problema da factoriza\'e7\'e3o e a sua liga\'e7\'e3o com a criptografia**\
+\
+O problema da factoriza\'e7\'e3o consiste em encontrar n\'fameros primos (p = primo se apenas p % 1 e p % p = 0), *p* e *q*, onde `N = p*q`, sendo N um n\'famero bastante grande. O problema aqui est\'e1 em encontrar estes n\'fameros, pois s\'e3o expendiosos em tempo (TIME) e recursos (SPACE).\
+\
+Uma das provas dos algoritmos RSA baseia-se neste problema, pois ao encontrar um numero bastante grande que comprove a formula, podemos dizer que a seguran\'e7a da algoritmo \'e9 segura, dado a sua *rigidez* (hardness).\
+\
+A factoriza\'e7\'e3o de um n\'famero *n* \'e9 dado pela divis\'e3o sequencial de n at\'e9 o valor 2 \{2, \'85, n -1\}. A complexidade computacional desta fatoriza\'e7\'e3o neste formato \'e9 `O(n)`. Contudo, h\'e1 melhorias que podem ser feitas, como por exemplo dividir n a cada sqrt(n), o que reduz a complexidade em `O(n^(1/2))`. De seguida, pode-se dividir n pelos primos que s\'e3o conhecidos e menor que sqrt(n), reduzindo a complexidade em `O(sqrt(n)/log(sqrt(n))`.\
+\
+**Problema do Logaritmo Discreto**\
+\
+Dado um intervalo multiplicativo *Zp*, composto por n\'fameros primos *p*, *g* e *x*, o problema do logaritmo discreto (DLP) consiste em encontrar o valor *y*, tal que `g^y = x` pertence a Zp, ou seja:\
+\
+```\
+g^y (=congruente) x (mod(p))\
+```}

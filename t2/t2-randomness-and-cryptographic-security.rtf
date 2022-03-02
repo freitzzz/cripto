@@ -1,0 +1,145 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-Bold;}
+{\colortbl;\red255\green255\blue255;\red24\green25\blue26;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c12549\c12941\c13333;\cssrgb\c100000\c100000\c100000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh15060\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Randomness and Cryptographic Security\
+\
+Te\'f3rica #2 de Criptografia Aplicada\
+\
+## Chaves Criptogr\'e1ficas (Cryptographic Keys)\
+\
+**De onde aparecem estas chaves?**\
+\
+Em **criptografia sim\'e9trica**, podem ser:\
+\
+- Geradas de forma uniforme usando um m\'e9todo aleat\'f3rio ou com base numa outra chave conhecida (pre-shared key);\
+- Derivadas de uma fun\'e7\'e3o de deriva\'e7\'e3o de chaves (KDF - Key Derivation Function), com base em:\
+	- Uma password ou chave secreta de **baixa entropia**;\
+	- Uma chave mestre de **alta entropia** com base num protocolo de partilha de chaves (KEP - Key Exchange Protocol)\
+\
+Em **criptografia assim\'e9trica**, podem ser:\
+\
+- Geradas atrav\'e9s de um algoritmo de chave p\'fablica-privada, onde este gera duas chaves que se complementam entre sim, sendo geradas aleatoriamente e uniformemente. A chave p\'fablica \'e9 conhecida mas a privada s\'f3 conhecida por quem a det\'e9m.\
+Por norma estas chaves s\'e3o muito maiores: Chaves RSA tem cerca de 4096 bits para o modo 128-bit security e chaves Elipitic-Curve tem cerca de 400 bits tamb\'e9m para o modo 128-bit security.\
+\
+**Como s\'e3o estas chaves geradas e guardadas ?**\
+\
+Idealmente num ambiente seguro de hardware, como por exemplo:\
+\
+- Hardware Security Module (HSM): Componente hardware respons\'e1vel por encriptar e decriptar de forma segura chaves criptogr\'e1fica, tamb\'e9m como armazenar estas;\
+- Smartcard ou *token* criptogr\'e1fico.\
+\
+Chaves que permanecem armazenadas durante periodos temporais grandes, por norma s\'e3o ***wrapped*** com outra chave, antes de serem armazenadas, usando Password-Based Encryption (Low Security), Hardware-Protected Master Key (Standard Security) ou uma chave mestre que pertence ao dispositivo hardware seguro (High Security).\
+\
+## Aleatoriedade (Cryptographic Keys)\
+\
+**O que \'e9 aleatoriedade (randomness) ?**\
+\
+Aleatoriedade n\'e3o \'e9 uma propriedade de uma string (no sentido em que n\'e3o \'e9 poss\'edvel dizer que uma string \'e9 mais aleat\'f3ria que a outra). \'c9 sim uma propriedade de:\
+\
+- Um processo de gera\'e7\'e3o (randomised processes);\
+- Um procedimento de *sampling* (sampling procedure).\
+\
+Processos de gera\'e7\'e3o s\'e3o descritos atrav\'e9s de **distribui\'e7\'f5es aleat\'f3rias** (randomness distributions). Estes come\'e7am atrav\'e9s uma distribui\'e7\'e3o uniforme, descrita ao longo de um conjunto finito `S`. Um processo `U` recolhe uma amostragem (samples) da distribui\'e7\'e3o uniforme se:\
+\
+<center>![randomness-distributions](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/keys/randomness-distributions.png)</center>\
+\
+Strings com tamanho `
+\f1\b\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u955 
+\f0\b0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 `:\
+	\
+- Qualquer string ocorre com uma probabilidade `1/2^
+\f1\b\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u955 
+\f0\b0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 `\
+- Podem ser implementadas ao descrever cada bit como uma \'93moeda perfeita\'94.\
+\
+\
+**O que \'e9 Entropia (Entropy) ?**\
+\
+Entropia mede a **incerteza** de uma amostra.\
+\
+**O que s\'e3o Random Number Generators (RNG) ?**\
+\
+Processos combinados que combinam:\
+\
+- Uma fonte de entropia (definida como bit string);\
+- Extratores de aleatoriedade (randomness extractores) (por norma uma fun\'e7\'e3o hash), que comprimem as bit strings de entropia em `
+\f1\b\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u955 
+\f0\b0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 ` bits.\
+\
+Estes processos s\'e3o tipicamente lentos, dado que boa aleatoriedade \'e9 dif\'edcil de se conseguir. Dado isto, algoritmos RNG s\'e3o n\'e3o determin\'edsticos.\
+\
+**O que s\'e3o Pseudorandom Number Generators (PRG) ?**\
+\
+PRG s\'e3o a resposta ao problema de os RNG serem lentos. Estes apenas consideram uma pequena amostra aleat\'f3ria e uniforme de tamanho `
+\f1\b\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u955 
+\f0\b0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 ` (seed) e geram bit strings longas aleat\'f3rias. Estes algoritmos s\'e3o por si determin\'edsticos.\
+\
+Um atacante n\'e3o deve conseguir distinguir PRGs de uma string aleat\'f3ria, sem saber o seu input (seed).\
+\
+**Stateful RNG in Operating Systems**\
+\
+Em sistemas operativas modernos, gera\'e7\'e3o aleat\'f3ria cont\'e9m estado:\
+- O algoritmo PRG mantem o estado, e o sistema operativo mistura a entropia com o estado PRG. O fluxo do algoritmo pode ser representado da seguinte maneira:\
+\
+init() -> PRG -> refresh(entropy) -> refresh (entropy) -> \'85 -> next() (termina o algoritmo e devolve a bit string aleat\'f3ria.\
+\
+Sistema operativas devem estar cientes do compromisso do estado do PRG. Este deve ser resistente a backtracking e prediction.\
+\
+Em sistemas `*nix`, PRG \'e9 acess\'edvel atrav\'e9s do ficheiro `/dev/urandom`. Em alguns sistemas `*nix`, existe tamb\'e9m o ficheiro `/dev/random` que permite obter as a aleatoriedade com a contrapartida que o acesso a este bloqueia no caso de n\'e3o haver mais entropia.\
+\
+## Quantifying Cryptographic Security\
+\
+Seguran\'e7a criptogr\'e1fica \'e9 quantificada matem\'e1tica e esta tenta *definir o imposs\'edvel*. O imposs\'edvel \'e9 definido como nenhum atacante tem vantagem sobre o algoritmo, independentemente do seu poder computacional, diante um certo valor (epilson).\
+\
+**O que \'e9 o One-Time-Pad (OTP) ?**\
+\
+Esquema de encripta\'e7\'e3o que usado corretamente \'e9 imposs\'edvel de ser quebrado. Utiliza como chave uma permuta\'e7\'e3o aleat\'f3ria sobre o texto a cifrar, no qual esta chave s\'f3 pode ser usada uma vez, caso contr\'e1rio o algoritmo pode ser quebrado. Esta permuta\'e7\'e3o \'e9 igual \'e0 da cifra de Vinen\'e8re, sendo que a chave tem o mesmo tamanho que o texto. Utiliza a opera\'e7\'e3o bit-wise XOR para encriptar e decriptar o texto.\
+\
+Vantagens: Inquebr\'e1vel, se n\'e3o conhecida a chave\
+Desvantagem: Requer chaves t\'e3o grandes como o texto a cifrar e o armazenamento destas torna-se dif\'edcil. As chaves apenas s\'f3 podem ser usadas uma vez.\
+\
+Contudo, as ideia atr\'e1s do OTP continua a ser central \'e0 criptografia moderna:\
+\
+- Prova que uma bit string \'e9 \'93t\'e3o boa\'94 como uma string aleat\'f3ria;\
+- Permite a utiliza\'e7\'e3o da pr\'f3pria bit string como chave OTP.\
+\
+**Esquemas de Encripta\'e7\'e3o Atuais**\
+\
+Hoje em dia um boa esquema de encripta\'e7\'e3o \'e9 designado por boas permuta\'e7\'e3o de chave, que:\
+\
+- S\'e3o chamadas de block cipher ou permuta\'e7\'f5es pseudo aleat\'f3rias;\
+- Requerem como input uma grande quantidade de bits (e.g., 256 bits)\
+- Requerem como chave uma grande quantidade de bits (e.g., 256 bits)\
+\
+A encripta\'e7\'e3o em si \'e9 realizada atrav\'e9s de uma aplica\'e7\'e3o gradual de um processo iterativo, que utiliza a permuta\'e7\'e3o desenhada e a chave repetidamente. Este processo tem de nome *um modo de opera\'e7\'e3o* (mode of operation).\
+\
+**Cifra de Bloco Ideal**\
+\
+A cifra de bloco ideal \'e9 uma sampled permutation uniformemente e aleat\'f3ria.\
+\
+Desvantagens? Requer uma tabela enorme contendo as chaves, que n\'e3o se consegue comprimir numa descri\'e7\'e3o compacta.\
+\
+Para tal utiliza-se block ciphers, tamb\'e9m conhecidas como permuta\'e7\'f5es pseudo aleat\'f3rias, pois:\
+\
+- Contem uma descri\'e7\'e3o p\'fablica compacta;\
+- S\'e3o comput\'e1veis eficientemente;\
+- Requerem uma chave secreta pequena.\
+\
+**Security Assurance**\
+\
+Como assegurar seguran\'e7a para esquemas n-bit?\
+\
+Duas vertentes:\
+\
+- **Heuristic Security**:\
+	- Comunidade de cryptanalysts que tentam quebrar o esquema (Prova Pr\'e1tica). Congressos/Competi\'e7\'f5es para quebrar os algoritmos que cada um especificou.\
+- **Provable Security**:\
+	- Prova matem\'e1tica (Prova te\'f3rica/formal), onde quebrar o esquema implica resolver um \'93hard problem\'94.}
