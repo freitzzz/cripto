@@ -1,0 +1,45 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9720\viewh14140\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Curvas El\'edpticas e Discrete Lattice Cryptography\
+\
+Te\'f3rica #10s de Criptografia Aplicada\
+\
+**O que s\'e3o Curvas El\'edpticas?**\
+\
+Curvas el\'edpticas s\'e3o um conjunto de solu\'e7\'f5es \'e0 equa\'e7\'e3o:\
+\
+```\
+Y^2 = X^3 + A*X + B\
+```\
+\
+Estas equa\'e7\'f5es s\'e3o identificadas como equa\'e7\'f5es **Weierstrass**. \
+\
+As curvas el\'edpticas s\'e3o aplicadas na criptografia atrav\'e9s de campos finitos (Finite Fields).\
+\
+**O problema ECDLP**\
+\
+O problema DLP diz que \'e9 dif\'edcil encontrar um n\'famero *y*, dada uma base *g*, onde `x = g^y (mod(p))` para um n\'famero primo grande *p*.\
+\
+O problema ECDLP \'e9 similar ao DLP, no sentido em que este diz que \'e9 dif\'edcil encontrar um valor *k*, dado um ponto base *P*, onde o ponto `Q = k*P`.\
+\
+Um diferen\'e7a importante a notar entre o ECDLP e o DLP, \'e9 que o ECDLP permite trabalhar com n\'fameros baixos e manter o mesmo n\'edvel de seguran\'e7a.\
+\
+**Como resolver o problema ECDLP?**\
+\
+Ao encontrar a colis\'e3o entre dois outputs (`c1*P + d1*Q = c2*P + d2*q`), \'e9 poss\'edvel determinar que `Q = k*P`, para um valor *k* desconhecido e *c1*, *d1*, *c2* e *d2* valores conhecidos que permitem encontrar *k*, produzindo o mesmo output.\
+\
+**Assinaturas com Curvas El\'edpticas**\
+\
+Algoritmo standard para assinar com ECC \'e9 o **ECDSA** (Eliptic Curve Digital Signature Algorithm), que substituiu assinaturas RSA e assinaturas cl\'e1ssicas DSA, em diversas aplica\'e7\'f5es. \'c9 o algoritmo de assinaturas usado em Bitcoin e tamb\'e9m em algumas implementa\'e7\'f5es TLS e SSH.\
+\
+O algoritmo decorre da seguinte maneira:\
+\
+1. Assinar mensagem com uma fun\'e7\'e3o criptogr\'e1fica tal como *SHA-256* ou *BLAKE2*, que resulta no valor *h*, interpretado entre 0 e n-1;\
+2. Usar um valor aleat\'f3rio *k*, entre 1 e n-1;\
+3. Calcular o ponto `k*G`, de coordenadas (x,y);\
+4. Calcular `r = x (mod (n))` e calcular `s = (h + rd)/k (mod(n)), sendo a assinatura dado pelos valores (r, s)`.}

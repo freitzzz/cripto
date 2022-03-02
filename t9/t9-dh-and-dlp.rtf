@@ -1,0 +1,93 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;\f2\ftech\fcharset77 Symbol;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c100000\c100000\c100000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9800\viewh14820\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Diffie-Hellman e Problema do Logaritmo Discreto (DLP)\
+\
+Te\'f3rica #9 de Criptografia Aplicada\
+\
+**Problema do Logaritmo Discreto (DLP)**\
+\
+O problema do logaritmo discreto defende que existe pelo menos uma solu\'e7\'e3o que satisfa\'e7a a condi\'e7\'e3o:\
+\
+```\
+a^m (=congruente)1 (mod(n))\
+```\
+\
+Primitive Root (raiz primitiva): Sendo `(a, n) = 1`, *a* \'e9 chamada de raiz de primitiva de *n*, se a ordem de `a (mod(n)) = 
+\f1\fs29\fsmilli14667 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u966 
+\f0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 (n)`. Nem todos os inteiros tem raizes primitivas, sendo que estes apenas existem em \{2, 4, p^n, 2*p^n, p = odd prime\}\
+\
+Existe tamb\'e9m a no\'e7\'e3o de \'93*i* \'e9 \'edndice de *b*\'94, sendo *p* um n\'famero primo e *a* uma raiz primitiva de *p*, se:\
+\
+```\
+b (=congruente) a^i (mod(p))\
+```\
+\
+**Diffie-Hellman (DH)**\
+\
+A Alice (A) e Bob (B) desejam comunicar sobre um canal n\'e3o seguro. Para tal, estes v\'e3o usar o Diffie-Hellman para cifrar as mensagens enviadas no canal de comunica\'e7\'e3o. Antes de produzir as chaves p\'fablicas e privadas, estes precisam de concordar no intervalo p\'fablico multiplicativo *Zp* que v\'e3o utilizar, de forma a que se saiba qual o n\'famero primo *p* e a base *g* pertencentes ao intervalo Zp.\
+\
+As chaves privadas s\'e3o produzidas de forma aleat\'f3rias, pertencentes ao intervalo Zp (*a*, *b* 
+\f2\fs29\fsmilli14667 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\uc0\u8712 
+\f1  
+\f0\fs36 \cf0 \cb1 \kerning1\expnd0\expndtw0 Zp). As chaves publicas s\'e3o produzidas com o valor das chaves privadas, sendo:\
+\
+```\
+A = g^a (mod(p))\
+B = g^b (mod(p))\
+```\
+\
+O valor secreto *k* n\'e3o tem que ser partilhado no canal, porque ambos sabem o calcular:\
+\
+```\
+k = A^b = (g^a)^b ) = g^a*b = (g^b)^a = B^a\
+```\
+\
+Este valor \'e9 usado para produzir uma ou mais chaves sim\'e9tricas, atrav\'e9s do uso de uma KDF (Key Derivation Function - fun\'e7\'e3o que produz uma string aleat\'f3ria com o tamanho da chave). \
+\
+A seguran\'e7a do Diffie-Hellman \'e9 dado por dois fatores:\
+\
+- O valor *g* deve ser uma raiz primitiva de *p*, caso contr\'e1rio apenas um pequeno conjunto de valores pode ser gerado como valores secretos partilhados;\
+- Os par\'e2metros de DH produzidos (i.e., valores primos produzidos) devem ser *seguros*, no sentido em que estes s\'e3o um valor primo seguro *p* (p = prime e (p - 1 / 2 ) = prime). A utiliza\'e7\'e3o destes valores primos seguros, garante que n\'e3o existam valores no intervale que sejam f\'e1ceis de \'93partir\'94 o DH.\
+\
+\'c9 de notar que a produ\'e7\'e3o destes valores primos seguros \'e9 1000x mais lenta que produzir par\'e2metros RSA, para o mesmo n\'edvel de seguran\'e7a/bits.\
+\
+**CDH e DDH**\
+\
+O Computation Diffie-Hellman e Decisional Diffie-Hellman, s\'e3o dois problemas associados a poss\'edveis ataques ao Diffie-Hellman. No CDH, o problema est\'e1 no calculo do valor secreto partilhado `g^a*b`, apenas atrav\'e9s dos valores p\'fablicos `g^a` e `g^b`, sem recorrendo aos valores privados *a* e *b*, ou seja, **descobrir o valor secreto partilhado apenas com a informa\'e7\'e3o p\'fablica**. Por consequ\'eancia, este problema partilha algumas similaridades com o RSA, onde o algoritmo GNFS o \'93parte\'94. Para o CDH existe o algoritmo NFS (number field sielve), que resolve o DLP e por consequ\'eancia, \'93parte\'94 o CDH.\
+\
+No DDH, o problema est\'e1 associado no calculo dos primeiros 32bits do valor secreto `g^a*b`, dado os 2048-bits dos valores p\'fablicos `g^a` e `g^b`, o que permite a um atacante conhecer mais sobre o valor secreto partilhado. Este problema \'e9 resolvido ao escolher-se o valor secreto sem que o atacante saiba que este foi escolhido aleatoriamente do intervalo.\
+\
+Se o DDH \'e9 dificil de se resolver, ent\'e3o o CDH tamb\'e9m o \'e9. Resolvendo o CDH permite tamb\'e9m resolver o DDH.\
+\
+**Modelos de Ataque para Key Agreement Protocols (KAP)**\
+\
+Existem tr\'eas tipos de ataques que podem ser realizados em protocolos que utilizam chaves para trocar informa\'e7\'e3o e realizar acordos:\
+\
+- ***Eavesdropper***, que descreve um atacante que observa as mensagem transmitidas entre duas entidades, podendo modificar, quebrar ou alterar as mensagens. Protege-se a comunica\'e7\'e3o contra o eavesdropper ao n\'e3o partilhar informa\'e7\'e3o sobre o valor secreto partilhado;\
+- ***Data Leak***, que descreve um atacante que adquire uma chave de sess\'e3o e todos os valores secretos tempor\'e1rios usados no protocolo, mas n\'e3o os valores permanentes;\
+- ***Breach***, que descreve um atacante que adquire as chaves secretas permanentes, podendo impressionar qualquer entidade ap\'f3s obter as chaves.\
+\
+**Objetivos de Seguran\'e7a em Key Agreement Protocols (KAP)**\
+\
+Os quatro objetivos mais relevantes para a seguran\'e7a em KAP s\'e3o:\
+\
+- ***Authentication***, que descreve que as duas entidades a comunicar devem poder-se autenticar entre si, de forma a criar autentica\'e7\'e3o m\'fatua;\
+- ***Key Control***, que descreve que nenhuma das duas entidades a comunicar deve por escolher ou influenciar o valor secreto final a partilhar;\
+- ***Forward Secrecy***, que garante que mesmo que os valores secretos permanentes sejam adquiridos, n\'e3o \'e9 poss\'edvel obter os valores secretos previamente partilhados;\
+- ***Resistance to key-compromise impersonation (KCI)***, que descreve que o protocolo a ser usado deve prevenir a falsifica\'e7\'e3o da comunica\'e7\'e3o.\
+\
+**Tipos de Diffie-Hellman**\
+\
+Existem diferentes tipos de Diffie-Hellman, sendo estes:\
+\
+- Anonymous Diffie-Hellman, que descreve a vers\'e3o mais simples do DH, onde nenhum dos participantes consegue verificar a identidade de quem est\'e1 a comunicar, sendo assim sujeito a ataques de eavesdropping;\
+- Authenticated Diffie-Hellman, que descreve um protocolo DH mais seguro, protegido de eavesdropping, mas n\'e3o protegido de data leaking;\
+- Menezes-Qu-Vanstone (MQV), ou Diffie-Hellman em \'93esteroides\'94, sendo este mais sofisticado e seguro que o Authenticated DH. Em compara\'e7\'e3o com este, o MQV permite enviar apenas duas mensagens de formar arbitr\'e1ria, mensagens mais curtas e n\'e3o precisa de enviar uma assinatura explicita ou mensagens de verifica\'e7\'e3o.}

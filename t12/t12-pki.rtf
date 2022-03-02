@@ -1,0 +1,131 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9720\viewh14140\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Public-Key Infrastructure\
+\
+Te\'f3rica #12 de Criptografia Aplicada\
+\
+## Public-Key Infrastructure (PKI)\
+\
+**Porqu\'ea PKI?**\
+\
+Todas as primitivas criptogr\'e1ficas de chave p\'fablica assumem que as chaves publicas s\'e3o autenticas, caso contr\'e1rio, os protocolos que as usam s\'e3o vulner\'e1veis a ataques MiTM.\
+\
+De formar a segurar que esta propriedade \'e9 cumprida, existem duas abordagens que se podem seguir:\
+\
+- Numa distribui\'e7\'e3o ad-hoc, onde cada chave p\'fablica \'e9 confirmada manualmente para cada entidade;\
+- Atrav\'e9s de uma PKI, que \'e9 requerida legalmente/pela regula\'e7\'e3o, onde devem ser descritos os standards t\'e9cnicos utilizados, como estes devem-se utilizados, responsabilidades e direitos das entidades e as garantias e penalidades relativamente \'e0 regula\'e7\'e3o.\
+\
+**Certificados Chave P\'fablica (Public-Key Certificates)**\
+\
+A Alice e o Bob desejam comunicar entre si sobre um canal inseguro, atrav\'e9s de criptografia de chave p\'fablica. Para realizar a troca de chaves, o Bob tem de saber que a chave recebida da Alice \'e9 realmente da Alice. Para tal, como est\'e3o num canal inseguro, o Bob tem que comunicar com uma *Trusted-Third-Party* (TTP), sobre um canal seguro, ed forma a que consiga provar que foi a Alice que lhe enviou a chave, usando o valor desta. Em certificados de chave p\'fablica, a TTP \'e9 chamada de *Certification Authority* (CA) e a Alice prova \'e0 CA que a sua chave p\'fablica \'e9 a que o Bob recebeu, ao assinar um *certificate request* (**PKCS#11**), dado que \'e9 o CA que fornece a chave secreta \'e0 Alice.\
+\
+O certificado fornecido pela CA providencia informa\'e7\'e3o que uma entidade necessita de verificar:\
+\
+- Identidade da entidade + a sua chave p\'fablica;\
+- Metadados da CA, como o *serial number* e *issue identity*\
+- Validade do certificado.\
+\
+No final o CA assina o certificado, formando-se assim certificado de chave p\'fablica.\
+\
+A confian\'e7a que um pode ter num certificado \'e9 sempre menor do que num CA.\
+\
+**O que  \'e9 o ASN.1?**\
+\
+Linguagem de nota\'e7\'e3o utilizada para descrever um certificado e muitos outros standards de redes, de forma agn\'f3stica/independente da linguagem/plataforma. **DER** (Distinguished Encoding Rules) \'e9 o formato utilizado para codificar a informa\'e7\'e3o dos certificados.\
+\
+Os certificados est\'e3o descritos em ASN.1 de forma a que as CA que os receba saibam os interpretar, relativamente ao uso dos algoritmos de hashing, cifras, etc.\
+\
+**Os certificados podem ser transmitidos sobre canais inseguros?**\
+\
+Nem todos\
+\
+**Verifica\'e7\'e3o de Certificados Chave P\'fablica**\
+\
+Na comunica\'e7\'e3o entre duas entidades, Alice e Bob, uma vez o Bob recebendo o certificado da Alice, este tem que certificar que este pertence mesmo \'e0 Alice. Para tal, este realizar primeiro umas valida\'e7\'f5es prim\'e1rias no seu lado, como verificar se o certificado n\'e3o expirou, metadados v\'e3o de acordo com o especificado. Depois, a CA \'e9 comunicada de forma a que esta verifique que a chave p\'fablica presente no certificado \'e9 realmente da Alice.\
+\
+Os certificados est\'e3o estandardizados como *X.509* na IETF (Internet Engineering Task Force). As estruturas de dados importantes contem objetos identificadores \'fanicos.\
+\
+A vers\'e3o atual dos certificados, 3, inclui informa\'e7\'e3o b\'e1sica como:\
+\
+- Subject (entidade):\
+- Issuer (CA);\
+- Validade;\
+- Public Key Info;\
+- Serial Number.\
+\
+Os certificados podem conter tamb\'e9m extens\'f5es/attachments, dos quais podem ser marcados como **cr\'edticos** e n\'e3o cr\'edticos. Todos as extens\'f5es s\'e3o identificados com um object identifier, e se marcadas como criticas e n\'e3o sejam reconhecidas, deve-se rejeitar o certificado. Existem tamb\'e9m extens\'f5es importantes, que denotam:\
+\
+- Chave identificadora da entidade/autoridade, que representa o fingerprint da chave p\'fablica;\
+- Restri\'e7\'f5es b\'e1sicas, que identificam se o certificado \'e9 especial, e como se deve utilizar as chaves.\
+\
+**O que \'e9 uma PKI?**\
+\
+Uma PKI \'e9 um conjunto de pap\'e9is, politicas, hardware, software e procedimentos necess\'e1rias para criar, manter, distribuir, usar, guardar e revocar certificados digitais.\
+\
+Papeis fundamentais de uma PKI:\
+\
+- Verificar e autenticar um utilizador com um certificado;\
+- Verificar que uma chave p\'fablica pertence a uma entidade.\
+\
+**Como funciona uma PKI?**\
+\
+Existem diversas \'e1reas e responsabilidades numa PKI.\
+\
+![pki_architecture](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/pki/pki_architecture.png)\
+\
+**Gest\'e3o e Opera\'e7\'f5es de Transa\'e7\'f5es**\
+\
+Parte vital de uma PKI que se responsabiliza em gerir a forma como os certificados s\'e3o armazenados e transferidos entre a PKI. Este especifica os protocolos usados para o armazenamento (e.g., LDAP), transfer\'eancia (HTTP, FTP, MIME) e codifica\'e7\'e3o.\
+\
+Exemplos de protocolos de opera\'e7\'e3o:\
+\
+- TLS especifica na sua RFC como os certificados s\'e3o trocados;\
+- S/MIME especifica que os certificados s\'e3o inclu\'eddos em attachments do PKCS#7;\
+- Certificados do sistema operativo s\'e3o geridos e mantidos por m\'f3dulos criptogr\'e1ficos standard.\
+\
+**PKI Management**\
+\
+### Como \'e9 que uma entidade Y verifica uma assinatura CA num certificado?\
+\
+1. Interpretar o certificado X.509;\
+2. Obter chaves p\'fablicas do/s CA/s no certificado;\
+3. Verificar assinatura da entidade X, atrav\'e9s da chave publica do CA.\
+\
+### Como \'e9 que uma entidade Y confia numa CA?\
+\
+- A entidade Y obt\'e9m um certificado diretamente da CA;\
+- A entidade Y confia em CA atrav\'e9s de outra CA que confia (se Y confia em CA 1 e CA 1 confia em CA 2, ent\'e3o Y confia em CA 2).\
+\
+### Como se comunica com uma CA?\
+\
+As **Registration Authorities** (RA) s\'e3o o *frontend* dos certificados, permitindo contacto direto com entidade finais. \'c9 respons\'e1vel por verificar a informa\'e7\'e3o presente nos certificados e garantir que as entidades \'fanicas possuem a chave secreta (e.g., Registo Civil, Loja do Cidad\'e3o).\
+\
+As **Certification Authorities** (CA) s\'e3o o *backend* dos certificados, sendo aqui que est\'e1 presente a infra-estrutura que assina os certificados, sendo fortemente segura com seguran\'e7a f\'edsica, air gaps, etc (e.g., Casa da Moeda).\
+\
+### Como se revoca um certificado?\
+\
+Os certificados tornam-se inv\'e1lidos a partir do momento que per\'edodo de vida destes expira, \'e9 perdida uma chave secreta, ocorre uma data breach, metadados tornam-se incorretos, etc.\
+\
+Existem diferentes formas de revocar um certificado:\
+\
+- Inclu\'ed-lo numa CRL (**Certificate Revokation Lists**) da CA, que representa uma blacklist de certificados revogados;\
+- Usar **Trusted Service Provider Lists** (TSL), que representam whitelists de certificados de confian\'e7a. Normalmente utilizado em entidade mais fechadas como a banca ou governo;\
+- Atrav\'e9s do OCSP - **Online Certificate Status Protocol**, onde um trusted server verifica as CRLs. Por norma este \'e9 per\'edodo pelas CA e s\'e3o usados em contextos de organiza\'e7\'f5es de larga escala;\
+- Certificate Pinning, onde os webservers/browsers/applications tem as suas pr\'f3prias whitelists e fazem a verifica\'e7\'e3o localmente.\
+\
+**Root CA**\
+\
+Root Certification Authorities s\'e3o CA \'93pais\'94 de outras CAs. S\'e3o estas que validam as CA filhos, sendo que confiando numa Root CA, ent\'e3o confia-se nas CA que esta mant\'e9m.\
+\
+Se uma entidade Y n\'e3o consegue verificar implicitamente que uma CA \'e9 de confian\'e7a, esta vai requisitando CA superiores a esta, at\'e9 encontrar uma que confie. Se neste processo a entidade Y n\'e3o conseguir arranjar certificados, ent\'e3o o processo termina.\
+\
+A entidade X envia para entidade Y todos os certificados CA que este necessite at\'e9 verificar a confian\'e7a, excepto o Root CA.\
+\
+**Certificate Policies**\
+\
+As politicas dos CA podem ser identificadas nos pr\'f3prios certificados, atrav\'e9s de espec\'edficos object identifiers, fazendo parte da lei cumprir estas politicas a quem interagir com os certificados. Dado isto, \'e9 necess\'e1rio realizar uma auditoria \'e0 CA antes de esta publicar os certificados.}

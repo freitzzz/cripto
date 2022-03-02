@@ -1,0 +1,81 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww9720\viewh14140\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 # Key Exchange Protocols\
+\
+Te\'f3rica #11 de Criptografia Aplicada\
+\
+## Key Management\
+\
+A criptografia est\'e1 dividida sobre dois eixos:\
+\
+![eixos_criptografia](https://raw.githubusercontent.com/freitzzz/cinderela/master/crypto/kep/eixos_criptografia.png)\
+\
+Em criptografia sim\'e9trica, as **cifras sim\'e9tricas** focam-se na confidencialidade (e.g., AES-CTR), ao que os MACs focam-se na autenticidade (e.g., HMAC). As cifras autenticadas (AEAD) focam-se tanto na confidencialidade como autenticidade.\
+\
+Criptografia sim\'e9trica funciona se a chave secreta seja partilhada, o que requer autenticidade e confidencialidade.\
+\
+\'97\
+\
+Em criptografia de chave p\'fablica, temos **assinaturas digitais** e **cifras assim\'e9tricas**. Existem duas chaves, a *privada* que \'e9 usada para **decifrar** e **assinar** mensagens, e a *p\'fablica* que \'e9 usada para **cifrar** e **verificar** mensagens.\
+\
+Uma assinatura no contexto de cifras \'e9 uma prova que uma entidade consegue utilizar a chave secreta.\
+\
+Por norma as cifras assim\'e9tricas s\'e3o h\'edbridas, pois tanto assinam como cifram uma mensagem.\
+\
+**Quantas chaves s\'e3o necess\'e1rias e qual o seu prop\'f3sito?**\
+\
+Existem dois tipos de chaves criptogr\'e1ficas, sejam estas p\'fablicas ou privadas:\
+\
+- De sess\'e3o (tempor\'e1rias), ou *data encapsulation keys*, que tem o prop\'f3sito de proteger a informa\'e7\'e3o. Estas s\'e3o sempre sim\'e9tricas, de curta dura\'e7\'e3o e vivem temporariamente na mem\'f3ria do computador, sendo que se expostas, apenas comprometem um pequeno conjunto de informa\'e7\'e3o;\
+- De longo termo (permanentes), ou *wrapping keys*, que tem o prop\'f3sito de proteger as chaves de sess\'e3o. Estas podem ser assim\'e9tricas, sim\'e9tricas, ou at\'e9 passwords (passphrases), sendo que existem poucas destas chaves, requerem um armazenamento de longa dura\'e7\'e3o (e.g., HSM) e requerem algum tipo de *trusted party* para serem estabelecidas.\
+\
+**Como \'e9 que as chaves de sess\'e3o s\'e3o estabelecidas?**\
+\
+As chaves de sess\'e3o podem ser estabelecidas de tr\'eas maneiras:\
+\
+- Diretamente derivadas de outras chaves de sess\'e3o, que acontece tipicamente em protocolos complexos como o TLS, e tamb\'e9m quando derivadas de uma chave mestre;\
+- Distribu\'eddas atrav\'e9s de um *trusted agent*, onde as chaves s\'e3o pr\'e9-acordadas com um trusted server (e.g., Kerberos, Radius);\
+- Atrav\'e9s de um acordo de chave autenticada, sendo chaves permanentes pr\'e9-acordadas entre duas entidades, realizando um handshake para construir a chave de sess\'e3o.\
+\
+**Como s\'e3o geridas as chaves em criptografia de chave p\'fablica?**\
+\
+A utiliza\'e7\'e3o de chaves p\'fablicas resolve o problema de garantir a confidencialidade e autenticidade em sistemas abertos (e.g., Internet, onde n\'e3o h\'e1 uma entidade central que os registe).\
+\
+O sistemas abertos tem um problema relativamente \'e0 autenticidade de quem comunica neste. N\'e3o \'e9 poss\'edvel reconhecer com certeza que uma chave p\'fablica A seja par da chave privada B, da entidade C. Para resolver este problema \'e9 imposto uma **infra-estrutura de chave p\'fablica** (Public Key Infrastructure) que gerar as chaves p\'fablicas e o seu par privado, distribuindo as mesmas a quem deseja interagir com o sistema.\
+\
+**Seguran\'e7a de Protocolos de Acordo de Chaves**\
+\
+Para estabelecer seguran\'e7a em protocolos de acordo de chaves, deve ser impostas as seguintes propriedades:\
+\
+- **Data Leak**: Apenas algumas chaves de sess\'e3o podem ser reveladas, mas nunca chaves permanentes;\
+- **Corruption**: Apenas as chaves de sess\'e3o atuais podem ser corrompidas, de forma a que as chaves anteriores se mantenham seguras e n\'e3o relevando as mensagens anteriores (forward secrecy);\
+- **Channel-Only**: As chaves podem apenas ser transportadas no canal de comunica\'e7\'e3o em que pertencem;\
+- **Key Control**: Apenas uma entidade n\'e3o pode determinar uma chave, sendo necess\'e1rias pelo menos duas para se chegar a um acordo;\
+- **Key Compromise Impersonation**:  A falsifica\'e7\'e3o de uma chave permanente de uma entidade A, n\'e3o deve permitir falsificar a entidade B. \
+\
+**Efici\'eancia em Protocolos de Acordo de Chaves**\
+\
+Para maximizar a efici\'eancia em protocolos de acordos de chaves, deve-se ter em conta as seguintes propriedades:\
+\
+- **N\'famero de round-trips**, ou seja o n\'famero de viagens entre A e B at\'e9 que seja satisfeito o acordo da chave (impacto da lat\'eancia da rede);\
+- **Banda-larga**, ou seja o n\'famero de bits enviados e recebidos no acordo;\
+- **Pre-computa\'e7\'e3o**, ou seja, realizar algum tipo de computa\'e7\'e3o no lado das entidades A e B de forma offline, de forma a que a computa\'e7\'e3o online requeira menos passos e seja mais r\'e1pida.\
+\
+**Seguran\'e7a de Diffie-Hellman Autenticado**\
+\
+- Autentica\'e7\'e3o m\'fatua (devido ao trace das assinaturas e a confirma\'e7\'e3o da chave adicional);\
+- Nenhuma entidade controla a chave final;\
+- Conhecer as chaves de sess\'e3o atuais n\'e3o d\'e1 a conhecer as sess\'f5es anteriores;\
+- Corromper as chaves assinadas atuais, n\'e3o d\'e1 a conhecer as chaves passadas.\
+\
+**Erros comuns cometidos em Diffie-Hellman**\
+\
+- Pr\'f3pria implementa\'e7\'e3o do protocolo;\
+- N\'e3o utilizar a correta KDF para o valor de `g^ab`;\
+- Utiliza\'e7\'e3o de DH an\'f3nimo sobre canais n\'e3o autenticados (sujeito a MiTM);\
+- Aceita\'e7\'e3o de chaves p\'fablicas n\'e3o autenticadas.}
